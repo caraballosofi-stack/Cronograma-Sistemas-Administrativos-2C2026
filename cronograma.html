@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cronograma · Sistemas Administrativos · 2C 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003575;
+    --navy-deep:#001F45;
+    --gold:#F2BC42;
+    --gold-deep:#C9922A;
+    --celeste:#EAF2F8;
+    --celeste-line:#B9D3E8;
+    --ink:#182333;
+    --slate:#5B6B82;
+    --slate-soft:#8B97A8;
+    --paper:#FBFAF6;
+    --white:#FFFFFF;
+    --teal:#2E7D6E;
+    --teal-bg:#E4F2EF;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Lora',Georgia,serif;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background:linear-gradient(155deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#fff;
+    padding:56px 24px 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:6px;
+    background:var(--gold);
+  }
+  .backlink{
+    position:absolute; left:20px; top:20px; z-index:2;
+    color:var(--celeste-line); text-decoration:none; font-size:13px; font-weight:600;
+  }
+  .backlink:hover{ color:#fff; }
+  .header-inner{
+    max-width:900px; margin:0 auto; position:relative; z-index:1;
+  }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--gold);
+    margin:0 0 14px;
+  }
+  header h1{
+    font-size:clamp(28px, 8vw, 48px);
+    line-height:1.1;
+    margin:0 0 10px;
+    font-weight:700;
+  }
+  header .subtitle{
+    font-size:17px;
+    color:#CFE0F5;
+    max-width:560px;
+    margin:0 0 28px;
+    line-height:1.55;
+  }
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:10px 28px;
+    font-size:14px;
+    color:#DCE9F7;
+    border-top:1px solid rgba(255,255,255,.18);
+    padding-top:20px;
+  }
+  .meta-row div{display:flex; flex-direction:column; gap:2px;}
+  .meta-row span.label{font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--gold);}
+
+  /* decorative faint circles */
+  .deco{
+    position:absolute; border-radius:50%;
+    border:1px solid rgba(255,255,255,.10);
+  }
+  .deco1{width:340px;height:340px; right:-120px; top:-140px;}
+  .deco2{width:180px;height:180px; right:60px; bottom:-90px; border-color:rgba(242,188,66,.25);}
+
+  /* ---------- Next class banner ---------- */
+  #next-banner{
+    max-width:900px; margin:-40px auto 0; padding:0 24px;
+    position:relative; z-index:2;
+  }
+  #next-banner .card{
+    background:var(--white);
+    border:1px solid var(--celeste-line);
+    border-radius:var(--radius);
+    box-shadow:0 14px 34px -18px rgba(0,53,117,.35);
+    padding:20px 24px;
+    display:flex; align-items:center; gap:18px;
+  }
+  #next-banner .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--gold); flex:0 0 auto;
+    box-shadow:0 0 0 5px rgba(242,188,66,.25);
+  }
+  #next-banner .text{font-size:15px; color:var(--slate);}
+  #next-banner .text strong{color:var(--navy); font-family:'Lora',serif; font-size:16.5px;}
+
+  /* ---------- Legend ---------- */
+  .legend{
+    max-width:900px; margin:40px auto 0; padding:0 24px;
+    display:flex; flex-wrap:wrap; gap:10px;
+  }
+  .legend .pill{
+    display:flex; align-items:center; gap:7px;
+    font-size:12.5px; color:var(--slate);
+    background:var(--white); border:1px solid #E7E2D6;
+    padding:6px 12px 6px 10px; border-radius:999px;
+  }
+  .legend .sw{width:9px;height:9px;border-radius:50%;}
+
+  /* ---------- Timeline ---------- */
+  main{max-width:900px; margin:0 auto; padding:36px 24px 100px;}
+  .month-heading{
+    font-family:'Inter'; font-weight:700; font-size:13px;
+    text-transform:uppercase; letter-spacing:.12em;
+    color:var(--navy);
+    margin:52px 0 18px;
+    padding-left:46px;
+    position:relative;
+  }
+  .month-heading:first-child{margin-top:0;}
+  .month-heading::before{
+    content:"";
+    position:absolute; left:14px; top:2px; bottom:2px; width:3px;
+    background:var(--gold); border-radius:2px;
+  }
+
+  .timeline{position:relative; padding-left:46px;}
+  .timeline::before{
+    content:"";
+    position:absolute; left:19px; top:6px; bottom:6px; width:2px;
+    background:linear-gradient(var(--celeste-line), var(--celeste-line));
+  }
+
+  .item{position:relative; margin-bottom:14px;}
+
+  .node{
+    position:absolute; left:-46px; top:2px;
+    width:40px; height:40px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--white); border:2px solid var(--navy);
+    font-family:'Lora',serif; font-weight:600; font-size:14px; color:var(--navy);
+    z-index:2;
+  }
+  .item.exam .node{background:var(--gold); border-color:var(--gold-deep); color:#402c00;}
+  .item.practica .node{background:var(--teal-bg); border-color:var(--teal); color:var(--teal);}
+  .item.intro .node{background:var(--navy); color:#fff;}
+  .item.holiday .node{
+    width:14px; height:14px; left:-33px; top:9px;
+    border:2px solid var(--slate-soft); background:var(--paper);
+  }
+
+  /* class card */
+  .card{
+    background:var(--white);
+    border:1px solid #EAE4D8;
+    border-radius:var(--radius);
+    padding:18px 20px 18px 22px;
+    transition:box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  }
+  .card:hover{
+    box-shadow:0 16px 30px -20px rgba(0,53,117,.4);
+    border-color:var(--celeste-line);
+  }
+  .item.exam .card{background:#FFF8E9; border-color:#F0DBA0;}
+  .item.practica .card{background:var(--teal-bg); border-color:#BFDFD7;}
+  .item.intro .card{background:var(--celeste); border-color:var(--celeste-line);}
+
+  .card-top{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:14px; flex-wrap:wrap; margin-bottom:6px;
+  }
+  .date-tag{
+    font-size:12.5px; font-weight:600; color:var(--slate);
+    white-space:nowrap;
+  }
+  .class-num{
+    font-size:11px; font-weight:700; color:var(--gold-deep);
+    text-transform:uppercase; letter-spacing:.08em;
+  }
+  .topic{
+    font-family:'Lora',serif; font-weight:600; font-size:17px;
+    color:var(--ink); line-height:1.4; margin:2px 0 10px;
+  }
+  .case-tag{
+    display:inline-block; font-size:12px; color:var(--slate);
+    background:var(--paper); border:1px solid #EFE9DC;
+    padding:3px 10px; border-radius:999px; margin-bottom:10px;
+  }
+  .resources{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+  .res-link{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:13px; font-weight:600; text-decoration:none;
+    color:var(--navy); background:var(--celeste);
+    border:1px solid var(--celeste-line);
+    padding:7px 13px; border-radius:9px;
+    transition:background .15s ease, transform .15s ease;
+  }
+  .res-link:hover{background:#DCEAF6; transform:translateY(-1px);}
+  .res-link.mintz{color:var(--teal); background:var(--teal-bg); border-color:#BFDFD7;}
+  .res-link.mintz:hover{background:#D3EBE4;}
+  .res-link.form{color:var(--gold-deep); background:#FFF8E9; border-color:#F0DBA0;}
+  .res-link.form:hover{background:#FDEFD0;}
+  .res-link.caso{color:#6B4FA0; background:#F1ECF9; border-color:#D9CBEF;}
+  .res-link.caso:hover{background:#E7DCF5;}
+  .res-link.video{color:#B3401E; background:#FBEAE3; border-color:#F0C6B4;}
+  .res-link.video:hover{background:#F7DACB;}
+  .res-link svg{width:14px;height:14px; flex:0 0 auto;}
+
+  /* holiday row */
+  .holiday-row{
+    display:flex; align-items:center; gap:12px;
+    padding:8px 0 8px 22px;
+    color:var(--slate-soft); font-size:13px; font-style:italic;
+  }
+  .holiday-row .hdate{font-weight:600; font-style:normal; color:var(--slate); min-width:150px;}
+
+  footer{
+    max-width:900px; margin:0 auto; padding:0 24px 60px;
+    color:var(--slate-soft); font-size:12.5px; line-height:1.7;
+  }
+  footer .box{
+    background:var(--white); border:1px dashed var(--celeste-line);
+    border-radius:12px; padding:16px 18px;
+  }
+  footer strong{color:var(--slate);}
+
+  @media (max-width:560px){
+    header h1{font-size:30px;}
+    header{padding:44px 18px 60px;}
+    .meta-row{gap:10px 20px;}
+    main,#next-banner,.legend,footer{padding-left:16px; padding-right:16px;}
+    .timeline{padding-left:38px;}
+    .node{left:-38px; width:34px; height:34px; font-size:12.5px;}
+    .item.holiday .node{left:-29px;}
+    .month-heading{padding-left:38px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .card,.res-link{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="backlink">← Inicio</a>
+  <div class="deco deco1"></div>
+  <div class="deco deco2"></div>
+  <div class="header-inner">
+    <p class="eyebrow">Cátedra Saravia · UBA · Facultad de Ciencias Económicas</p>
+    <h1>Sistemas&nbsp;Administrativos</h1>
+    <p class="subtitle">Cronograma interactivo del 2do. cuatrimestre 2026. Cada clase enlaza directo a la página del apunte de cátedra y, cuando corresponde, a las lecturas complementarias de Mintzberg.</p>
+    <div class="meta-row">
+      <div><span class="label">Profesora</span>Sofía Caraballo</div>
+      <div><span class="label">Dictado de clases</span>13/08 al 04/12 de 2026</div>
+      <div><span class="label">Modalidad</span>Presencial · Lunes y jueves de 19 a 21 h</div>
+    </div>
+  </div>
+</header>
+
+<div id="next-banner"></div>
+
+<div class="legend">
+  <span class="pill"><span class="sw" style="background:var(--navy)"></span>Clase te&oacute;rica</span>
+  <span class="pill"><span class="sw" style="background:var(--teal)"></span>Pr&aacute;ctica integradora</span>
+  <span class="pill"><span class="sw" style="background:var(--gold)"></span>Parcial / final</span>
+  <span class="pill"><span class="sw" style="background:var(--slate-soft)"></span>Feriado</span>
+</div>
+
+<main id="timeline-root"></main>
+
+<script>
+const APUNTE = "apunte_sa_2c26.pdf";
+const MINTZ  = "mintzberg_understanding_organizations.pdf";
+const CLASE1 = "clase_1_2c26.pdf";
+const CLASE2 = "clase_2_2c26.pdf";
+const CLASE3 = "clase_3_2c26.pdf";
+const CLASE4 = "clase_4_2c26.pdf";
+const CLASE5 = "clase_5_2c26.pdf";
+const CLASE6 = "clase_6_2c26.pdf";
+const CASO1_HAVANNA = "caso_1_havanna.pdf";
+const CASO2_HELADO = "caso_2_helado.pdf";
+const CASO3_ALMACEN = "caso_3_el_almacen.pdf";
+const VIDEO_DISENO = "video_caso_diseno.mp4";
+
+const VIEWER = "pdfjs/web/viewer.html";
+function apuntePage(p){ return `${VIEWER}?file=../${APUNTE}#page=${p}`; }
+function mintzPage(p){ return `${VIEWER}?file=../${MINTZ}#page=${p}`; }
+function clase1Page(p){ return `${VIEWER}?file=../${CLASE1}#page=${p}`; }
+function clase2Page(p){ return `${VIEWER}?file=../${CLASE2}#page=${p}`; }
+function clase3Page(p){ return `${VIEWER}?file=../${CLASE3}#page=${p}`; }
+function clase4Page(p){ return `${VIEWER}?file=../${CLASE4}#page=${p}`; }
+function clase5Page(p){ return `${VIEWER}?file=../${CLASE5}#page=${p}`; }
+function clase6Page(p){ return `${VIEWER}?file=../${CLASE6}#page=${p}`; }
+function havannaPage(p){ return `${VIEWER}?file=../${CASO1_HAVANNA}#page=${p}`; }
+function heladoPage(p){ return `${VIEWER}?file=../${CASO2_HELADO}#page=${p}`; }
+function almacenPage(p){ return `${VIEWER}?file=../${CASO3_ALMACEN}#page=${p}`; }
+
+const iconBook = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
+const iconGlobe = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>`;
+const iconForm = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`;
+const iconCase = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>`;
+const iconPlay = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>`;
+
+// ---- Data ----
+const items = [
+  {type:'intro', num:1, day:'Jueves', date:'2026-08-13', topic:'Presentaci\u00f3n de la materia. Test diagn\u00f3stico', case:null,
+    resources:[
+      {label:'Ficha del Estudiante', href:'https://forms.cloud.microsoft/r/mqJ0E6WpCv', form:true},
+      {label:'Test Diagn\u00f3stico', href:'https://forms.cloud.microsoft/r/EUgn1JBBrK', form:true},
+      {label:'Clase 1 \u00b7 PDF', href:clase1Page(1)},
+    ]},
+  {type:'holiday', date:'2026-08-17', label:'Feriado \u00b7 Paso a la inmortalidad del Gral. Jos\u00e9 de San Mart\u00edn'},
+  {type:'class', num:2, day:'Jueves', date:'2026-08-20', topic:'Introducci\u00f3n a la Teor\u00eda General de los Sistemas. La organizaci\u00f3n como sistema abierto. Diagrama de bloque global. Actividad Entradas y Salidas',
+    resources:[
+      {label:'Apunte \u00b7 Introducci\u00f3n', href:apuntePage(3)},
+      {label:'Apunte \u00b7 Cap\u00edtulo 1', href:apuntePage(5)},
+      {label:'Clase 2 \u00b7 PDF', href:clase2Page(1)},
+      {label:'Consignas \u00b7 Caso 1 Havanna', href:havannaPage(1)},
+    ]},
+  {type:'class', num:3, day:'Lunes', date:'2026-08-24', topic:'La actividad principal. Proceso y Procedimiento \u2013 Actividad y Tarea \u2013 Mapa de Procesos',
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 2', href:apuntePage(19)},
+      {label:'Clase 3 \u00b7 PDF', href:clase3Page(1)},
+      {label:'Consignas \u00b7 Caso \u00a1Helado, Helado!', href:heladoPage(1), caso:true},
+      {label:'Rellenar formulario \u00b7 Caso \u00a1Helado, Helado!', href:'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Uh4_4TJuckmCyml0IO48mB_pjY_wodRKie6g84Taed1UN1gxQ1k3WkJSTU9UMUdQUkkxMkZUREFOOS4u', form:true},
+    ]},
+  {type:'class', num:4, day:'Jueves', date:'2026-08-27', topic:'Sistema Productivo \u2013 Ambiente estable-din\u00e1mico. Estandarizaci\u00f3n \u2013 Organizaciones burocr\u00e1ticas y org\u00e1nicas',
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 2', href:apuntePage(19)},
+      {label:'Apunte \u00b7 Cap\u00edtulo 3', href:apuntePage(27)},
+      {label:'Mintzberg \u00b7 Cap\u00edtulo 6 \u2013 Dise\u00f1o en contexto', href:mintzPage(34), mintz:true},
+      {label:'Clase 4 \u00b7 PDF', href:clase4Page(1)},
+      {label:'Rellenar formulario \u00b7 Caso Producci\u00f3n de Alfajores', href:'https://forms.cloud.microsoft/r/fbZpRKGeTd', form:true},
+      {label:'Video \u00b7 Caso Producci\u00f3n de Alfajores', href:'https://www.youtube.com/watch?v=J-QthgW7wQU', video:true},
+      {label:'Video \u00b7 Vida y muerte en un almac\u00e9n', href:'https://www.youtube.com/watch?v=547MsZNtW_k', video:true},
+      {label:'Video \u00b7 Empresa de dise\u00f1o', href:VIDEO_DISENO, video:true},
+    ]},
+  {type:'class', num:5, day:'Lunes', date:'2026-08-31', topic:'Tipos de Sistemas Productivos \u2013 Estrategias de Producci\u00f3n \u2013 Sistema T\u00e9cnico',
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 2', href:apuntePage(19)},
+      {label:'Apunte \u00b7 Sistema de Producci\u00f3n', href:apuntePage(68)},
+      {label:'Clase 5 \u00b7 PDF', href:clase5Page(1)},
+      {label:'Consignas \u00b7 Caso El Almac\u00e9n', href:almacenPage(1), caso:true},
+    ]},
+  {type:'class', num:6, day:'Jueves', date:'2026-09-03', topic:'Puesto de trabajo \u2013 Ambiente simple y complejo \u2013 Descentralizaci\u00f3n \u2013 Relaci\u00f3n con Sistema T\u00e9cnico \u2013 Caso Pr\u00e1ctico',
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 4', href:apuntePage(34)},
+      {label:'Mintzberg \u00b7 Cap\u00edtulo 5 \u2013 Los elementos del dise\u00f1o', href:mintzPage(27), mintz:true},
+      {label:'Clase 6 \u00b7 PDF', href:clase6Page(1)},
+    ]},
+  {type:'class', num:7, day:'Lunes', date:'2026-09-07', topic:'Agrupamientos \u2013 Departamentalizaci\u00f3n \u2013 Organigrama \u2013 Caso Pr\u00e1ctico',
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 5', href:apuntePage(40)},
+      {label:'Mintzberg \u00b7 Cap\u00edtulo 5 \u2013 Los elementos del dise\u00f1o', href:mintzPage(27), mintz:true},
+    ]},
+  {type:'class', num:8, day:'Jueves', date:'2026-09-10', topic:'Modelos Organizacionales \u2013 Esquema de Fuerzas',
+    resources:[{label:'Mintzberg \u00b7 Cap\u00edtulos 7 a 13', href:mintzPage(36), mintz:true}]},
+  {type:'practica', num:9, day:'Lunes', date:'2026-09-14', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'practica', num:10, day:'Jueves', date:'2026-09-17', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'holiday', date:'2026-09-21', label:'Feriado \u00b7 D\u00eda del Estudiante'},
+  {type:'exam', num:11, day:'Jueves', date:'2026-09-24', topic:'1er. Parcial', resources:[]},
+  {type:'exam', num:12, day:'Lunes', date:'2026-09-28', topic:'Devoluci\u00f3n 1er. Parcial \u2013 Entrega de notas', resources:[]},
+  {type:'class', num:13, day:'Jueves', date:'2026-10-01', topic:'Introducci\u00f3n a los Sistemas Administrativos \u2013 Sistemas de Planificaci\u00f3n, Informaci\u00f3n y Control',
+    resources:[{label:'Apunte \u00b7 Cap\u00edtulo 6', href:apuntePage(45)}]},
+  {type:'class', num:14, day:'Lunes', date:'2026-10-05', topic:'Repaso Proceso y Procedimiento \u2013 Diagramas de representaci\u00f3n', resources:[]},
+  {type:'class', num:15, day:'Jueves', date:'2026-10-08', topic:'Sistema de Producci\u00f3n \u2013 Caso',
+    resources:[{label:'Apunte \u00b7 Sistema de Producci\u00f3n', href:apuntePage(68)}]},
+  {type:'holiday', date:'2026-10-12', label:'Feriado \u00b7 D\u00eda del Respeto a la Diversidad Cultural'},
+  {type:'class', num:16, day:'Jueves', date:'2026-10-15', topic:'Sistema de Compras \u2013 Caso',
+    resources:[{label:'Apunte \u00b7 Sistema de Compras', href:apuntePage(69)}]},
+  {type:'class', num:17, day:'Lunes', date:'2026-10-19', topic:'Sistema de Pagos \u2013 Caso',
+    resources:[{label:'Apunte \u00b7 Sistema de Pagos', href:apuntePage(74)}]},
+  {type:'class', num:18, day:'Jueves', date:'2026-10-22', topic:'Sistema de Ventas \u2013 Caso',
+    resources:[{label:'Apunte \u00b7 Sistemas de Ventas', href:apuntePage(79)}]},
+  {type:'class', num:19, day:'Lunes', date:'2026-10-26', topic:'Sistema de Cobranzas \u2013 Caso',
+    resources:[{label:'Apunte \u00b7 Sistema de Cobranzas', href:apuntePage(84)}]},
+  {type:'class', num:20, day:'Jueves', date:'2026-10-29', topic:'Transformaci\u00f3n Digital en las organizaciones', resources:[]},
+  {type:'practica', num:21, day:'Lunes', date:'2026-11-02', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'practica', num:22, day:'Jueves', date:'2026-11-05', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'practica', num:23, day:'Lunes', date:'2026-11-09', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'exam', num:24, day:'Jueves', date:'2026-11-12', topic:'2do. Parcial', resources:[]},
+  {type:'exam', num:25, day:'Lunes', date:'2026-11-16', topic:'Devoluci\u00f3n 2do. Parcial \u2013 Entrega de notas', resources:[]},
+  {type:'practica', num:26, day:'Jueves', date:'2026-11-19', topic:'Pr\u00e1ctica integradora', resources:[]},
+  {type:'holiday', date:'2026-11-23', label:'Feriado \u00b7 D\u00eda de la Soberan\u00eda Nacional'},
+  {type:'exam', num:27, day:'Jueves', date:'2026-11-26', topic:'Recuperatorio', resources:[]},
+  {type:'holiday', date:'2026-11-30', label:'Feriado \u00b7 D\u00eda con fines tur\u00edsticos'},
+  {type:'exam', num:28, day:'Jueves', date:'2026-12-03', topic:'Final', resources:[]},
+];
+
+const MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function fmtDate(iso){
+  const [y,m,d] = iso.split('-').map(Number);
+  return `${d} de ${MONTHS[m-1]}`;
+}
+function monthKey(iso){
+  const [y,m] = iso.split('-').map(Number);
+  return `${MONTHS[m-1]} ${y}`;
+}
+
+function resLink(r){
+  const cls = r.mintz ? 'res-link mintz' : r.form ? 'res-link form' : r.caso ? 'res-link caso' : r.video ? 'res-link video' : 'res-link';
+  const icon = r.mintz ? iconGlobe : r.form ? iconForm : r.caso ? iconCase : r.video ? iconPlay : iconBook;
+  return `<a class="${cls}" href="${r.href}" target="_blank" rel="noopener">${icon}${r.label}</a>`;
+}
+
+function renderItem(it){
+  if(it.type === 'holiday'){
+    return `<div class="item holiday"><span class="node"></span>
+      <div class="holiday-row"><span class="hdate">${fmtDate(it.date)}</span><span>${it.label}</span></div>
+    </div>`;
+  }
+  const typeClass = it.type === 'exam' ? 'exam' : it.type === 'practica' ? 'practica' : it.type === 'intro' ? 'intro' : '';
+  const nodeLabel = it.type === 'exam' ? '\u2605' : it.num;
+  const caseHtml = it.case ? `<span class="case-tag">Caso: ${it.case}</span><br>` : '';
+  const resHtml = it.resources && it.resources.length ? `<div class="resources">${it.resources.map(resLink).join('')}</div>` : '';
+  return `<div class="item ${typeClass}">
+    <span class="node">${nodeLabel}</span>
+    <div class="card">
+      <div class="card-top">
+        <span class="date-tag">${it.day} \u00b7 ${fmtDate(it.date)}</span>
+        <span class="class-num">Clase ${it.num}</span>
+      </div>
+      <p class="topic">${it.topic}</p>
+      ${caseHtml}
+      ${resHtml}
+    </div>
+  </div>`;
+}
+
+function render(){
+  const root = document.getElementById('timeline-root');
+  let html = '';
+  let currentMonth = null;
+  let openTimeline = false;
+  items.forEach((it, idx) => {
+    const mk = monthKey(it.date);
+    if(mk !== currentMonth){
+      if(openTimeline) html += '</div>';
+      html += `<div class="month-heading">${mk}</div><div class="timeline">`;
+      openTimeline = true;
+      currentMonth = mk;
+    }
+    html += renderItem(it);
+  });
+  if(openTimeline) html += '</div>';
+  root.innerHTML = html;
+}
+render();
+
+// ---- Next class banner ----
+function renderBanner(){
+  const now = new Date();
+  const todayIso = now.toISOString().slice(0,10);
+  const upcoming = items.find(it => it.date >= todayIso && it.type !== 'holiday');
+  const banner = document.getElementById('next-banner');
+  if(!upcoming){
+    banner.innerHTML = '';
+    return;
+  }
+  const isToday = upcoming.date === todayIso;
+  const label = isToday ? 'Hoy' : 'Pr\u00f3xima clase';
+  banner.innerHTML = `<div class="card">
+    <span class="dot"></span>
+    <div class="text"><strong>${label} \u00b7 ${fmtDate(upcoming.date)}${upcoming.num ? ' \u00b7 Clase '+upcoming.num : ''}</strong><br>${upcoming.topic}</div>
+  </div>`;
+}
+renderBanner();
+</script>
+
+</body>
+</html>

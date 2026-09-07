@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Asistencia · Sistemas Administrativos · 2C 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003575; --navy-deep:#001F45; --gold:#F2BC42; --gold-deep:#C9922A;
+    --celeste:#EAF2F8; --celeste-line:#B9D3E8; --ink:#182333; --slate:#5B6B82;
+    --slate-soft:#8B97A8; --paper:#FBFAF6; --white:#FFFFFF;
+    --teal:#2E7D6E; --teal-bg:#E4F2EF; --red:#C0392B; --red-bg:#FBEAE8;
+    --amber:#B8860B; --amber-bg:#FBF3DD;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 45%, var(--navy) 100%);
+    color:var(--ink); font-family:'Inter',system-ui,sans-serif;
+    display:flex; align-items:center; justify-content:center; padding:24px;
+  }
+  .card{
+    width:100%; max-width:460px; background:var(--white);
+    border-radius:20px; box-shadow:0 24px 60px rgba(0,15,40,0.35); overflow:hidden;
+  }
+  .card-top{ background:var(--navy); padding:28px 28px 22px; position:relative; }
+  .card-top::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:6px; background:var(--gold); }
+  .backlink{
+    position:absolute; right:20px; top:20px; z-index:2;
+    color:var(--celeste-line); text-decoration:none; font-size:12.5px; font-weight:600;
+  }
+  .backlink:hover{ color:#fff; }
+  .eyebrow{ text-transform:uppercase; letter-spacing:0.14em; font-size:11px; font-weight:700; color:var(--gold); margin:0 0 6px; }
+  .card-top h1{ font-family:'Lora',serif; font-size:22px; font-weight:600; color:var(--white); margin:0 0 4px; line-height:1.25; }
+  .card-top p{ margin:0; color:var(--celeste-line); font-size:13px; }
+  .body-content{ padding:24px 28px 28px; }
+  label{ display:block; font-size:12.5px; font-weight:700; color:var(--slate); text-transform:uppercase; letter-spacing:0.04em; margin:0 0 6px; }
+  input[type="tel"]{
+    width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--celeste-line);
+    font-size:15px; font-family:'Inter',sans-serif; color:var(--ink); background:var(--paper); outline:none;
+  }
+  input[type="tel"]:focus{ border-color:var(--navy); }
+  button#buscarBtn{
+    width:100%; margin-top:16px; padding:14px; border:none; border-radius:12px;
+    background:var(--gold); color:var(--navy-deep); font-weight:700; font-size:15px; cursor:pointer;
+  }
+  button#buscarBtn:hover{ background:var(--gold-deep); }
+  .hidden{ display:none !important; }
+  .resultado{ margin-top:22px; }
+  .pct-circle{
+    width:130px; height:130px; border-radius:50%; margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    border:8px solid var(--celeste-line);
+  }
+  .pct-circle .num{ font-family:'Lora',serif; font-size:30px; font-weight:600; color:var(--navy); line-height:1; }
+  .pct-circle .lbl{ font-size:11px; color:var(--slate); margin-top:2px; }
+  .pct-circle.ok{ border-color:var(--teal); }
+  .pct-circle.warn{ border-color:var(--amber); }
+  .pct-circle.danger{ border-color:var(--red); }
+  .status-msg{ text-align:center; font-size:14px; font-weight:600; margin-bottom:18px; }
+  .status-msg.ok{ color:var(--teal); }
+  .status-msg.warn{ color:var(--amber); }
+  .status-msg.danger{ color:var(--red); }
+  .detalle{
+    background:var(--paper); border-radius:12px; padding:14px 16px; font-size:13px; color:var(--slate);
+  }
+  .detalle strong{ color:var(--ink); }
+  .status-box{
+    display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border-radius:10px;
+    font-size:13px; line-height:1.5; margin-top:16px;
+  }
+  .status-box.error{ background:var(--red-bg); color:var(--red); }
+  .loader{ text-align:center; padding:10px 0; color:var(--slate); font-size:13px; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-top">
+    <a href="index.html" class="backlink">← Inicio</a>
+    <p class="eyebrow">Cátedra Saravia · Sistemas Administrativos</p>
+    <h1>Mi asistencia</h1>
+    <p>Consultá tu porcentaje de asistencia acumulado</p>
+  </div>
+
+  <div class="body-content">
+    <label for="dniInput">DNI o N° de Registro</label>
+    <input type="tel" id="dniInput" placeholder="Ej: 40123456" inputmode="numeric" autocomplete="off">
+    <button id="buscarBtn" type="button">Consultar</button>
+
+    <div id="loadingMsg" class="loader hidden">Buscando…</div>
+
+    <div id="errorBox" class="status-box error hidden">
+      <span>⚠️</span>
+      <span id="errorText"></span>
+    </div>
+
+    <div id="resultado" class="resultado hidden">
+      <div id="pctCircle" class="pct-circle">
+        <div class="num" id="pctNum">--%</div>
+        <div class="lbl">asistencia</div>
+      </div>
+      <div id="statusMsg" class="status-msg"></div>
+      <div class="detalle">
+        Asististe a <strong id="asistidasCount">0</strong> de <strong id="totalCount">0</strong> clases dictadas hasta la fecha.
+        <div id="faltantesWrap" style="margin-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Nota: los datos se identifican por un hash del DNI/Registro, no en texto plano,
+// como medida básica de privacidad. Esto no reemplaza autenticación real.
+const SALT = "SA-Saravia-2C2026";
+
+// Sesiones del cronograma: [numero, fecha, esExamenExcluido]
+const SESIONES = [
+  [1,"2026-08-13",false],[2,"2026-08-20",false],[3,"2026-08-24",false],[4,"2026-08-27",false],
+  [5,"2026-08-31",false],[6,"2026-09-03",false],[7,"2026-09-07",false],[8,"2026-09-10",false],
+  [9,"2026-09-14",false],[10,"2026-09-17",false],[11,"2026-09-24",true],[12,"2026-09-28",false],
+  [13,"2026-10-01",false],[14,"2026-10-05",false],[15,"2026-10-08",false],[16,"2026-10-15",false],
+  [17,"2026-10-19",false],[18,"2026-10-22",false],[19,"2026-10-26",false],[20,"2026-10-29",false],
+  [21,"2026-11-02",false],[22,"2026-11-05",false],[23,"2026-11-09",false],[24,"2026-11-12",true],
+  [25,"2026-11-16",false],[26,"2026-11-19",false],[27,"2026-11-26",true],[28,"2026-12-03",true]
+];
+
+async function sha256hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest('SHA-256', enc);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function getHoyStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+}
+
+function clasesHastaHoy(){
+  const hoy = getHoyStr();
+  return SESIONES.filter(([num, fecha, esExamen]) => fecha <= hoy && !esExamen).map(([num]) => num);
+}
+
+let dataCache = null;
+async function cargarDatos(){
+  if(dataCache) return dataCache;
+  const resp = await fetch('asistencia_data.json');
+  dataCache = await resp.json();
+  return dataCache;
+}
+
+const dniInput = document.getElementById('dniInput');
+const buscarBtn = document.getElementById('buscarBtn');
+const loadingMsg = document.getElementById('loadingMsg');
+const errorBox = document.getElementById('errorBox');
+const errorText = document.getElementById('errorText');
+const resultado = document.getElementById('resultado');
+const pctCircle = document.getElementById('pctCircle');
+const pctNum = document.getElementById('pctNum');
+const statusMsg = document.getElementById('statusMsg');
+const asistidasCount = document.getElementById('asistidasCount');
+const totalCount = document.getElementById('totalCount');
+const faltantesWrap = document.getElementById('faltantesWrap');
+
+buscarBtn.addEventListener('click', async function(){
+  errorBox.classList.add('hidden');
+  resultado.classList.add('hidden');
+  const dni = dniInput.value.replace(/\D/g,'').trim();
+  if(dni.length < 5){
+    errorText.textContent = 'Ingresá un DNI o número de registro válido.';
+    errorBox.classList.remove('hidden');
+    return;
+  }
+  loadingMsg.classList.remove('hidden');
+  buscarBtn.disabled = true;
+  try{
+    const data = await cargarDatos();
+    const hash = await sha256hex(dni);
+    const entry = data[hash];
+    loadingMsg.classList.add('hidden');
+    buscarBtn.disabled = false;
+
+    if(!entry){
+      errorText.textContent = 'No encontramos ese DNI/Registro en el padrón. Verificá que esté bien escrito, o consultá con la cátedra.';
+      errorBox.classList.remove('hidden');
+      return;
+    }
+
+    const totalClases = clasesHastaHoy();
+    const asistidas = entry.clases_asistidas.filter(c => totalClases.includes(c));
+    const pct = totalClases.length > 0 ? Math.round((asistidas.length / totalClases.length) * 100) : 0;
+
+    pctNum.textContent = pct + '%';
+    asistidasCount.textContent = asistidas.length;
+    totalCount.textContent = totalClases.length;
+
+    pctCircle.classList.remove('ok','warn','danger');
+    statusMsg.classList.remove('ok','warn','danger');
+    if(pct >= 75){
+      pctCircle.classList.add('ok'); statusMsg.classList.add('ok');
+      statusMsg.textContent = '¡Buena asistencia!';
+    } else if(pct >= 60){
+      pctCircle.classList.add('warn'); statusMsg.classList.add('warn');
+      statusMsg.textContent = 'Atención: acercate al mínimo requerido';
+    } else {
+      pctCircle.classList.add('danger'); statusMsg.classList.add('danger');
+      statusMsg.textContent = 'Asistencia por debajo del mínimo';
+    }
+
+    const faltantes = totalClases.filter(c => !asistidas.includes(c));
+    if(faltantes.length > 0){
+      faltantesWrap.innerHTML = `<strong>Clases sin registrar:</strong> ${faltantes.join(', ')}`;
+    } else {
+      faltantesWrap.innerHTML = '';
+    }
+
+    resultado.classList.remove('hidden');
+  } catch(e){
+    loadingMsg.classList.add('hidden');
+    buscarBtn.disabled = false;
+    errorText.textContent = 'Ocurrió un error al buscar tus datos. Probá de nuevo en unos minutos.';
+    errorBox.classList.remove('hidden');
+  }
+});
+
+dniInput.addEventListener('keydown', function(e){
+  if(e.key === 'Enter') buscarBtn.click();
+});
+</script>
+
+</body>
+</html>

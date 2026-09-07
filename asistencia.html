@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registrar Asistencia · Sistemas Administrativos · 2C 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#003575;
+    --navy-deep:#001F45;
+    --gold:#F2BC42;
+    --gold-deep:#C9922A;
+    --celeste:#EAF2F8;
+    --celeste-line:#B9D3E8;
+    --ink:#182333;
+    --slate:#5B6B82;
+    --slate-soft:#8B97A8;
+    --paper:#FBFAF6;
+    --white:#FFFFFF;
+    --teal:#2E7D6E;
+    --teal-bg:#E4F2EF;
+    --red:#C0392B;
+    --red-bg:#FBEAE8;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:linear-gradient(160deg, var(--navy) 0%, var(--navy-deep) 45%, var(--navy) 100%);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .card{
+    width:100%;
+    max-width:460px;
+    background:var(--white);
+    border-radius:20px;
+    box-shadow:0 24px 60px rgba(0,15,40,0.35);
+    overflow:hidden;
+  }
+  .card-top{
+    background:var(--navy);
+    padding:28px 28px 22px;
+    position:relative;
+  }
+  .card-top::before{
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:6px;
+    background:var(--gold);
+  }
+  .backlink{
+    position:absolute; right:20px; top:20px; z-index:2;
+    color:var(--celeste-line); text-decoration:none; font-size:12.5px; font-weight:600;
+  }
+  .backlink:hover{ color:#fff; }
+  .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:0.14em;
+    font-size:11px;
+    font-weight:700;
+    color:var(--gold);
+    margin:0 0 6px;
+  }
+  .card-top h1{
+    font-family:'Lora',serif;
+    font-size:22px;
+    font-weight:600;
+    color:var(--white);
+    margin:0 0 4px;
+    line-height:1.25;
+  }
+  .card-top p{
+    margin:0;
+    color:var(--celeste-line);
+    font-size:13px;
+  }
+  .body-content{
+    padding:24px 28px 28px;
+  }
+  .status-box{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:14px 16px;
+    border-radius:12px;
+    margin-bottom:18px;
+    font-size:13.5px;
+    line-height:1.5;
+  }
+  .status-box.info{ background:var(--celeste); color:var(--navy); }
+  .status-box.error{ background:var(--red-bg); color:var(--red); }
+  .status-box.success{ background:var(--teal-bg); color:var(--teal); }
+  .status-box .icon{ font-size:18px; line-height:1; flex-shrink:0; }
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--slate);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin:16px 0 6px;
+  }
+  input[type="text"], input[type="tel"]{
+    width:100%;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1.5px solid var(--celeste-line);
+    font-size:15px;
+    font-family:'Inter',sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    outline:none;
+    transition:border-color 0.15s;
+  }
+  input[type="text"]:focus, input[type="tel"]:focus{
+    border-color:var(--navy);
+  }
+  .field-error{
+    font-size:12px;
+    color:var(--red);
+    margin-top:4px;
+    display:none;
+  }
+  button#submitBtn{
+    width:100%;
+    margin-top:22px;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--gold);
+    color:var(--navy-deep);
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+    transition:transform 0.1s, background 0.15s;
+  }
+  button#submitBtn:hover:not(:disabled){ background:var(--gold-deep); }
+  button#submitBtn:disabled{
+    background:#E2E6EC;
+    color:var(--slate-soft);
+    cursor:not-allowed;
+  }
+  button#retryBtn{
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    border:1.5px solid var(--celeste-line);
+    border-radius:12px;
+    background:var(--white);
+    color:var(--navy);
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .loader{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    padding:20px 0;
+    color:var(--slate);
+    font-size:14px;
+    text-align:center;
+  }
+  .spinner{
+    width:34px; height:34px;
+    border:3px solid var(--celeste-line);
+    border-top-color:var(--navy);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .hidden{ display:none !important; }
+  .footnote{
+    margin-top:18px;
+    font-size:11.5px;
+    color:var(--slate-soft);
+    text-align:center;
+    line-height:1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-top">
+    <a href="index.html" class="backlink">← Inicio</a>
+    <p class="eyebrow">Cátedra Saravia · Sistemas Administrativos</p>
+    <h1>Registrar asistencia</h1>
+    <p id="claseInfo">Verificando fecha y horario…</p>
+  </div>
+
+  <div class="body-content">
+
+    <!-- Loading state -->
+    <div id="loadingState" class="loader">
+      <div class="spinner"></div>
+      <div id="loadingText">Verificando tu ubicación…</div>
+    </div>
+
+    <!-- Blocked state (wrong day/time/location) -->
+    <div id="blockedState" class="hidden">
+      <div class="status-box error">
+        <span class="icon">⚠️</span>
+        <span id="blockedMessage"></span>
+      </div>
+      <button id="retryBtn" type="button">Reintentar</button>
+    </div>
+
+    <!-- Form state -->
+    <div id="formState" class="hidden">
+      <div class="status-box success">
+        <span class="icon">✓</span>
+        <span id="okMessage">Ubicación y horario verificados. Completá tus datos.</span>
+      </div>
+
+      <label for="nombreInput">Nombre y Apellido</label>
+      <input type="text" id="nombreInput" placeholder="Ej: Juan Pérez" autocomplete="name">
+      <div class="field-error" id="nombreError">Ingresá tu nombre completo.</div>
+
+      <label for="dniInput">DNI o N° de Registro</label>
+      <input type="tel" id="dniInput" placeholder="Ej: 40123456" inputmode="numeric" autocomplete="off">
+      <div class="field-error" id="dniError">Ingresá un número válido (7 a 9 dígitos).</div>
+
+      <button id="submitBtn" type="button" disabled>Confirmar asistencia</button>
+
+      <p class="footnote">Al confirmar vas a ser redirigido al formulario oficial para enviar tu registro.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---------- CONFIGURACIÓN ----------
+
+// Coordenadas de FCE-UBA, Av. Córdoba 2122
+const AULA_LAT = -34.599778;
+const AULA_LON = -58.397667;
+const RADIO_METROS = 400;
+
+// Ventana horaria de clase
+const HORA_INICIO = 19; // 19:00
+const HORA_FIN = 21;    // 21:00
+
+// Fechas de clase (cronograma completo, 2do cuatrimestre 2026)
+const FECHAS_CLASE = {
+  "2026-08-13": 1, "2026-08-20": 2, "2026-08-24": 3, "2026-08-27": 4,
+  "2026-08-31": 5, "2026-09-03": 6, "2026-09-07": 7, "2026-09-10": 8,
+  "2026-09-14": 9, "2026-09-17": 10, "2026-09-24": 11, "2026-09-28": 12,
+  "2026-10-01": 13, "2026-10-05": 14, "2026-10-08": 15, "2026-10-15": 16,
+  "2026-10-19": 17, "2026-10-22": 18, "2026-10-26": 19, "2026-10-29": 20,
+  "2026-11-02": 21, "2026-11-05": 22, "2026-11-09": 23, "2026-11-12": 24,
+  "2026-11-16": 25, "2026-11-19": 26, "2026-11-26": 27, "2026-12-03": 28
+};
+
+// Link base del Microsoft Form + nombres de parámetros
+const FORM_BASE = "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=eY-BTISrUkWbfC_nFbDQ1eyhLUs6QgtInToaWudugJBUMU83OVpXV1dXNEZVUUxJVU1MWkhFOVJTNS4u";
+const PARAM_NOMBRE = "r30d1727724cb48fc93e47ac1b3012a95";
+const PARAM_DNI = "re50395767c7a46299af777828cd797ef";
+
+// ---------- LÓGICA ----------
+
+function pad(n){ return n.toString().padStart(2,'0'); }
+
+function getFechaHoyStr(){
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function distanciaMetros(lat1, lon1, lat2, lon2){
+  const R = 6371000;
+  const toRad = x => x * Math.PI / 180;
+  const dLat = toRad(lat2-lat1);
+  const dLon = toRad(lon2-lon1);
+  const a = Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  const c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R*c;
+}
+
+const loadingState = document.getElementById('loadingState');
+const loadingText = document.getElementById('loadingText');
+const blockedState = document.getElementById('blockedState');
+const blockedMessage = document.getElementById('blockedMessage');
+const formState = document.getElementById('formState');
+const claseInfo = document.getElementById('claseInfo');
+const retryBtn = document.getElementById('retryBtn');
+const submitBtn = document.getElementById('submitBtn');
+const nombreInput = document.getElementById('nombreInput');
+const dniInput = document.getElementById('dniInput');
+const nombreError = document.getElementById('nombreError');
+const dniError = document.getElementById('dniError');
+
+function showBlocked(msg){
+  loadingState.classList.add('hidden');
+  formState.classList.add('hidden');
+  blockedState.classList.remove('hidden');
+  blockedMessage.textContent = msg;
+}
+
+function showForm(){
+  loadingState.classList.add('hidden');
+  blockedState.classList.add('hidden');
+  formState.classList.remove('hidden');
+}
+
+function validarCampos(){
+  const nombreOk = nombreInput.value.trim().length >= 3;
+  const dniDigits = dniInput.value.replace(/\D/g,'');
+  const dniOk = dniDigits.length >= 7 && dniDigits.length <= 9;
+  nombreError.style.display = (!nombreOk && nombreInput.value.length>0) ? 'block' : 'none';
+  dniError.style.display = (!dniOk && dniInput.value.length>0) ? 'block' : 'none';
+  submitBtn.disabled = !(nombreOk && dniOk);
+}
+nombreInput.addEventListener('input', validarCampos);
+dniInput.addEventListener('input', validarCampos);
+
+submitBtn.addEventListener('click', function(){
+  const nombre = encodeURIComponent(nombreInput.value.trim());
+  const dni = encodeURIComponent(dniInput.value.replace(/\D/g,''));
+  const url = `${FORM_BASE}&${PARAM_NOMBRE}=${nombre}&${PARAM_DNI}=${dni}`;
+  window.location.href = url;
+});
+
+function iniciarVerificacion(){
+  loadingState.classList.remove('hidden');
+  blockedState.classList.add('hidden');
+  formState.classList.add('hidden');
+  loadingText.textContent = 'Verificando fecha y horario…';
+
+  const hoyStr = getFechaHoyStr();
+  const claseNum = FECHAS_CLASE[hoyStr];
+  const ahora = new Date();
+  const hora = ahora.getHours() + ahora.getMinutes()/60;
+
+  if(!claseNum){
+    showBlocked('Hoy no corresponde ninguna clase de Sistemas Administrativos según el cronograma. Si creés que esto es un error, contactá a la cátedra.');
+    return;
+  }
+
+  claseInfo.textContent = `Clase ${claseNum} · ${hoyStr.split('-').reverse().join('/')}`;
+
+  if(hora < HORA_INICIO || hora > HORA_FIN){
+    showBlocked(`El registro de asistencia solo está disponible entre las ${HORA_INICIO}:00 y las ${HORA_FIN}:00 hs.`);
+    return;
+  }
+
+  loadingText.textContent = 'Verificando tu ubicación…';
+
+  if(!navigator.geolocation){
+    showBlocked('Tu navegador no permite verificar la ubicación. Probá desde otro dispositivo o navegador.');
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    function(pos){
+      const dist = distanciaMetros(pos.coords.latitude, pos.coords.longitude, AULA_LAT, AULA_LON);
+      if(dist > RADIO_METROS){
+        showBlocked(`No detectamos que estés en la facultad (distancia aproximada: ${Math.round(dist)} m). Acercate al aula e intentá de nuevo.`);
+        return;
+      }
+      showForm();
+    },
+    function(err){
+      showBlocked('Necesitamos acceso a tu ubicación para registrar la asistencia. Activá el permiso de ubicación en tu navegador e intentá de nuevo.');
+    },
+    { enableHighAccuracy:true, timeout:12000, maximumAge:0 }
+  );
+}
+
+retryBtn.addEventListener('click', iniciarVerificacion);
+
+iniciarVerificacion();
+</script>
+
+</body>
+</html>
