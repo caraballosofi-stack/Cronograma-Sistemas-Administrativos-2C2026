@@ -178,7 +178,7 @@ buscarBtn.addEventListener('click', async function(){
   buscarBtn.disabled = true;
   try{
     const data = await cargarDatos();
-    const hash = await sha256hex(dni);
+    const hash = await sha256hex(dni + SALT);
     const entry = data[hash];
     loadingMsg.classList.add('hidden');
     buscarBtn.disabled = false;
