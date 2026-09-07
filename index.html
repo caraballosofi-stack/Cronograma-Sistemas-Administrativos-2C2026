@@ -289,8 +289,8 @@
 <main id="timeline-root"></main>
 
 <script>
-const APUNTE = "Apunte_SA_2C26.pdf";
-const MINTZ  = "Mintzberg_Understanding_Organizations.pdf";
+const APUNTE = "apunte_sa_2c26.pdf";
+const MINTZ  = "mintzberg_understanding_organizations.pdf";
 const CLASE1 = "clase_1_2c26.pdf";
 const CLASE2 = "clase_2_2c26.pdf";
 const CLASE3 = "clase_3_2c26.pdf";
@@ -303,17 +303,17 @@ const CASO3_ALMACEN = "caso_3_el_almacen.pdf";
 const VIDEO_DISENO = "video_caso_diseno.mp4";
 
 const VIEWER = "web/viewer.html";
-function apuntePage(p){ return `${VIEWER}?file=../../${APUNTE}#page=${p}`; }
-function mintzPage(p){ return `${VIEWER}?file=../../${MINTZ}#page=${p}`; }
-function clase1Page(p){ return `${VIEWER}?file=../../${CLASE1}#page=${p}`; }
-function clase2Page(p){ return `${VIEWER}?file=../../${CLASE2}#page=${p}`; }
-function clase3Page(p){ return `${VIEWER}?file=../../${CLASE3}#page=${p}`; }
-function clase4Page(p){ return `${VIEWER}?file=../../${CLASE4}#page=${p}`; }
-function clase5Page(p){ return `${VIEWER}?file=../../${CLASE5}#page=${p}`; }
-function clase6Page(p){ return `${VIEWER}?file=../../${CLASE6}#page=${p}`; }
-function havannaPage(p){ return `${VIEWER}?file=../../${CASO1_HAVANNA}#page=${p}`; }
-function heladoPage(p){ return `${VIEWER}?file=../../${CASO2_HELADO}#page=${p}`; }
-function almacenPage(p){ return `${VIEWER}?file=../../${CASO3_ALMACEN}#page=${p}`; }
+function apuntePage(p){ return `${VIEWER}?file=../${APUNTE}#page=${p}`; }
+function mintzPage(p){ return `${VIEWER}?file=../${MINTZ}#page=${p}`; }
+function clase1Page(p){ return `${VIEWER}?file=../${CLASE1}#page=${p}`; }
+function clase2Page(p){ return `${VIEWER}?file=../${CLASE2}#page=${p}`; }
+function clase3Page(p){ return `${VIEWER}?file=../${CLASE3}#page=${p}`; }
+function clase4Page(p){ return `${VIEWER}?file=../${CLASE4}#page=${p}`; }
+function clase5Page(p){ return `${VIEWER}?file=../${CLASE5}#page=${p}`; }
+function clase6Page(p){ return `${VIEWER}?file=../${CLASE6}#page=${p}`; }
+function havannaPage(p){ return `${VIEWER}?file=../${CASO1_HAVANNA}#page=${p}`; }
+function heladoPage(p){ return `${VIEWER}?file=../${CASO2_HELADO}#page=${p}`; }
+function almacenPage(p){ return `${VIEWER}?file=../${CASO3_ALMACEN}#page=${p}`; }
 
 const iconBook = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 const iconGlobe = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>`;
