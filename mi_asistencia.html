@@ -147,7 +147,7 @@ function clasesHastaHoy(){
 let dataCache = null;
 async function cargarDatos(){
   if(dataCache) return dataCache;
-  const resp = await fetch('asistencia_data.json');
+  const resp = await fetch('asistencia_data.json?v=' + Date.now());
   dataCache = await resp.json();
   return dataCache;
 }
