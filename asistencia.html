@@ -229,9 +229,9 @@
       <input type="text" id="nombreInput" placeholder="Ej: Juan Pérez" autocomplete="name">
       <div class="field-error" id="nombreError">Ingresá tu nombre completo.</div>
 
-      <label for="dniInput">DNI o N° de Registro</label>
-      <input type="tel" id="dniInput" placeholder="Ej: 40123456" inputmode="numeric" autocomplete="off">
-      <div class="field-error" id="dniError">Ingresá un número válido (7 a 9 dígitos).</div>
+      <label for="dniInput">N° de Registro</label>
+      <input type="tel" id="dniInput" placeholder="Ej: 916915" inputmode="numeric" autocomplete="off">
+      <div class="field-error" id="dniError">Ingresá tu N° de Registro (o DNI si no lo recordás).</div>
 
       <button id="submitBtn" type="button" disabled>Confirmar asistencia</button>
 
@@ -317,7 +317,7 @@ function showForm(){
 function validarCampos(){
   const nombreOk = nombreInput.value.trim().length >= 3;
   const dniDigits = dniInput.value.replace(/\D/g,'');
-  const dniOk = dniDigits.length >= 7 && dniDigits.length <= 9;
+  const dniOk = dniDigits.length >= 6 && dniDigits.length <= 9;
   nombreError.style.display = (!nombreOk && nombreInput.value.length>0) ? 'block' : 'none';
   dniError.style.display = (!dniOk && dniInput.value.length>0) ? 'block' : 'none';
   submitBtn.disabled = !(nombreOk && dniOk);

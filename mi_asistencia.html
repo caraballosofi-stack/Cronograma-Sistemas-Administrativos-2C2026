@@ -87,8 +87,8 @@
   </div>
 
   <div class="body-content">
-    <label for="dniInput">DNI o N° de Registro</label>
-    <input type="tel" id="dniInput" placeholder="Ej: 40123456" inputmode="numeric" autocomplete="off">
+    <label for="dniInput">N° de Registro</label>
+    <input type="tel" id="dniInput" placeholder="Ej: 916915" inputmode="numeric" autocomplete="off">
     <button id="buscarBtn" type="button">Consultar</button>
 
     <div id="loadingMsg" class="loader hidden">Buscando…</div>
@@ -170,7 +170,7 @@ buscarBtn.addEventListener('click', async function(){
   resultado.classList.add('hidden');
   const dni = dniInput.value.replace(/\D/g,'').trim();
   if(dni.length < 5){
-    errorText.textContent = 'Ingresá un DNI o número de registro válido.';
+    errorText.textContent = 'Ingresá tu N° de Registro (o DNI si no lo recordás).';
     errorBox.classList.remove('hidden');
     return;
   }
@@ -184,7 +184,7 @@ buscarBtn.addEventListener('click', async function(){
     buscarBtn.disabled = false;
 
     if(!entry){
-      errorText.textContent = 'No encontramos ese DNI/Registro en el padrón. Verificá que esté bien escrito, o consultá con la cátedra.';
+      errorText.textContent = 'No encontramos ese Registro (o DNI) en el padrón. Verificá que esté bien escrito, o consultá con la cátedra.';
       errorBox.classList.remove('hidden');
       return;
     }
