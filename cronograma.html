@@ -303,6 +303,8 @@ const CLASE3 = "clase_3_2c26.pdf";
 const CLASE4 = "clase_4_2c26.pdf";
 const CLASE5 = "clase_5_2c26.pdf";
 const CLASE6 = "clase_6_2c26.pdf";
+const CLASE8 = "clase_8_2c26.pdf";
+const CLASE9 = "clase_9_2c26.pdf";
 const CASO1_HAVANNA = "caso_1_havanna.pdf";
 const CASO2_HELADO = "caso_2_helado.pdf";
 const CASO3_ALMACEN = "caso_3_el_almacen.pdf";
@@ -318,6 +320,8 @@ function clase3Page(p){ return `${VIEWER}?file=../${CLASE3}#page=${p}`; }
 function clase4Page(p){ return `${VIEWER}?file=../${CLASE4}#page=${p}`; }
 function clase5Page(p){ return `${VIEWER}?file=../${CLASE5}#page=${p}`; }
 function clase6Page(p){ return `${VIEWER}?file=../${CLASE6}#page=${p}`; }
+function clase8Page(p){ return `${VIEWER}?file=../${CLASE8}#page=${p}`; }
+function clase9Page(p){ return `${VIEWER}?file=../${CLASE9}#page=${p}`; }
 function havannaPage(p){ return `${VIEWER}?file=../${CASO1_HAVANNA}#page=${p}`; }
 function heladoPage(p){ return `${VIEWER}?file=../${CASO2_HELADO}#page=${p}`; }
 function almacenPage(p){ return `${VIEWER}?file=../${CASO3_ALMACEN}#page=${p}`; }
@@ -383,8 +387,12 @@ const items = [
       {label:'Caso El Almac\u00e9n \u00b7 Consignas V2', href:almacenV2Page(1)},
     ]},
   {type:'class', num:8, day:'Jueves', date:'2026-09-10', topic:'Modelos Organizacionales \u2013 Esquema de Fuerzas',
-    resources:[{label:'Mintzberg \u00b7 Cap\u00edtulos 7 a 13', href:mintzPage(36), mintz:true}]},
-  {type:'practica', num:9, day:'Lunes', date:'2026-09-14', topic:'Pr\u00e1ctica integradora', resources:[]},
+    resources:[
+      {label:'Mintzberg \u00b7 Cap\u00edtulos 7 a 13', href:mintzPage(36), mintz:true},
+      {label:'Clase 8 \u00b7 PDF', href:clase8Page(1)},
+    ]},
+  {type:'practica', num:9, day:'Lunes', date:'2026-09-14', topic:'Pr\u00e1ctica integradora',
+    resources:[{label:'Clase 9 \u00b7 PDF', href:clase9Page(1)}]},
   {type:'practica', num:10, day:'Jueves', date:'2026-09-17', topic:'Pr\u00e1ctica integradora', resources:[]},
   {type:'holiday', date:'2026-09-21', label:'Feriado \u00b7 D\u00eda del Estudiante'},
   {type:'exam', num:11, day:'Jueves', date:'2026-09-24', topic:'1er. Parcial', resources:[]},
