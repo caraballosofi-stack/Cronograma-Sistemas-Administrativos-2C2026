@@ -309,6 +309,8 @@ const CASO1_HAVANNA = "caso_1_havanna.pdf";
 const CASO2_HELADO = "caso_2_helado.pdf";
 const CASO3_ALMACEN = "caso_3_el_almacen.pdf";
 const CASO3_ALMACEN_V2 = "caso_3_el_almacen_v2.pdf";
+const CASO4_SANATORIO = "caso_4_sanatorio_san_gabriel.pdf";
+const CASO5_NUTRIBABY = "caso_5_nutribaby.pdf";
 const VIDEO_DISENO = "video_caso_diseno.mp4";
 
 const VIEWER = "web/viewer.html";
@@ -326,6 +328,8 @@ function havannaPage(p){ return `${VIEWER}?file=../${CASO1_HAVANNA}#page=${p}`; 
 function heladoPage(p){ return `${VIEWER}?file=../${CASO2_HELADO}#page=${p}`; }
 function almacenPage(p){ return `${VIEWER}?file=../${CASO3_ALMACEN}#page=${p}`; }
 function almacenV2Page(p){ return `${VIEWER}?file=../${CASO3_ALMACEN_V2}#page=${p}`; }
+function sanatorioPage(p){ return `${VIEWER}?file=../${CASO4_SANATORIO}#page=${p}`; }
+function nutribabyPage(p){ return `${VIEWER}?file=../${CASO5_NUTRIBABY}#page=${p}`; }
 
 const iconBook = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 const iconGlobe = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/></svg>`;
@@ -390,9 +394,13 @@ const items = [
     resources:[
       {label:'Mintzberg \u00b7 Cap\u00edtulos 7 a 13', href:mintzPage(36), mintz:true},
       {label:'Clase 8 \u00b7 PDF', href:clase8Page(1)},
+      {label:'Caso Sanatorios San Gabriel \u00b7 Consignas', href:sanatorioPage(1)},
     ]},
   {type:'practica', num:9, day:'Lunes', date:'2026-09-14', topic:'Pr\u00e1ctica integradora',
-    resources:[{label:'Clase 9 \u00b7 PDF', href:clase9Page(1)}]},
+    resources:[
+      {label:'Clase 9 \u00b7 PDF', href:clase9Page(1)},
+      {label:'Caso Nutribaby \u00b7 Consignas', href:nutribabyPage(1)},
+    ]},
   {type:'practica', num:10, day:'Jueves', date:'2026-09-17', topic:'Pr\u00e1ctica integradora', resources:[]},
   {type:'holiday', date:'2026-09-21', label:'Feriado \u00b7 D\u00eda del Estudiante'},
   {type:'exam', num:11, day:'Jueves', date:'2026-09-24', topic:'1er. Parcial', resources:[]},
