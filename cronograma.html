@@ -305,6 +305,8 @@ const CLASE5 = "clase_5_2c26.pdf";
 const CLASE6 = "clase_6_2c26.pdf";
 const CLASE8 = "clase_8_2c26.pdf";
 const CLASE9 = "clase_9_2c26.pdf";
+const CLASE13 = "clase_13_2c26.pdf";
+const CLASE14 = "clase_14_2c26.pdf";
 const CASO1_HAVANNA = "caso_1_havanna.pdf";
 const CASO2_HELADO = "caso_2_helado.pdf";
 const CASO3_ALMACEN = "caso_3_el_almacen.pdf";
@@ -325,6 +327,8 @@ function clase5Page(p){ return `${VIEWER}?file=../${CLASE5}#page=${p}`; }
 function clase6Page(p){ return `${VIEWER}?file=../${CLASE6}#page=${p}`; }
 function clase8Page(p){ return `${VIEWER}?file=../${CLASE8}#page=${p}`; }
 function clase9Page(p){ return `${VIEWER}?file=../${CLASE9}#page=${p}`; }
+function clase13Page(p){ return `${VIEWER}?file=../${CLASE13}#page=${p}`; }
+function clase14Page(p){ return `${VIEWER}?file=../${CLASE14}#page=${p}`; }
 function havannaPage(p){ return `${VIEWER}?file=../${CASO1_HAVANNA}#page=${p}`; }
 function heladoPage(p){ return `${VIEWER}?file=../${CASO2_HELADO}#page=${p}`; }
 function almacenPage(p){ return `${VIEWER}?file=../${CASO3_ALMACEN}#page=${p}`; }
@@ -409,8 +413,12 @@ const items = [
   {type:'exam', num:11, day:'Jueves', date:'2026-09-24', topic:'1er. Parcial', resources:[]},
   {type:'exam', num:12, day:'Lunes', date:'2026-09-28', topic:'Devoluci\u00f3n 1er. Parcial \u2013 Entrega de notas', resources:[]},
   {type:'class', num:13, day:'Jueves', date:'2026-10-01', topic:'Introducci\u00f3n a los Sistemas Administrativos \u2013 Sistemas de Planificaci\u00f3n, Informaci\u00f3n y Control',
-    resources:[{label:'Apunte \u00b7 Cap\u00edtulo 6', href:apuntePage(45)}]},
-  {type:'class', num:14, day:'Lunes', date:'2026-10-05', topic:'Repaso Proceso y Procedimiento \u2013 Diagramas de representaci\u00f3n', resources:[]},
+    resources:[
+      {label:'Apunte \u00b7 Cap\u00edtulo 6', href:apuntePage(45)},
+      {label:'Clase 13 \u00b7 PDF', href:clase13Page(1)},
+    ]},
+  {type:'class', num:14, day:'Lunes', date:'2026-10-05', topic:'Repaso Proceso y Procedimiento \u2013 Diagramas de representaci\u00f3n',
+    resources:[{label:'Clase 14 \u00b7 PDF', href:clase14Page(1)}]},
   {type:'class', num:15, day:'Jueves', date:'2026-10-08', topic:'Sistema de Producci\u00f3n \u2013 Caso',
     resources:[{label:'Apunte \u00b7 Sistema de Producci\u00f3n', href:apuntePage(68)}]},
   {type:'holiday', date:'2026-10-12', label:'Feriado \u00b7 D\u00eda del Respeto a la Diversidad Cultural'},
