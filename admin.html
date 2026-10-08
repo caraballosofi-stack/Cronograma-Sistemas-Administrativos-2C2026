@@ -204,6 +204,7 @@
     <div id="appMsg" class="msg hidden" style="margin:0 0 14px"></div>
     <div class="tabs">
       <button class="tab on" data-tab="tablero" type="button">Tablero</button>
+      <button class="tab" data-tab="seguimiento" type="button">Seguimiento</button>
       <button class="tab" data-tab="asistencia" type="button">Asistencia</button>
       <button class="tab" data-tab="alumnos" type="button">Alumnos</button>
       <button class="tab" data-tab="notas" type="button">Notas</button>
@@ -214,11 +215,6 @@
 
     <section id="tab-tablero">
       <div class="kpis" id="kpis"></div>
-      <div class="panel">
-        <h3>Para contactar</h3>
-        <p class="nota">Alumnos a los que conviene escribirles, con el motivo. "Dejó de venir" quiere decir que faltó a las últimas 2 clases dictadas. Con "Escribir mail" editás el texto y lo abrís en tu correo con los destinatarios en copia oculta.</p>
-        <div id="contactos"></div>
-      </div>
       <div class="panel">
         <h3>Asistencia por clase</h3>
         <p class="nota">Porcentaje del curso presente en cada clase dictada. Los parciales no se cuentan. Pasá el mouse por una barra para ver el detalle.</p>
@@ -249,6 +245,14 @@
       <div class="panel" id="panelVistas">
         <h3>Visitas al sitio</h3>
         <div id="vistas"><p class="nota">Cargando…</p></div>
+      </div>
+    </section>
+
+    <section id="tab-seguimiento" class="hidden">
+      <div class="panel">
+        <h3>Para contactar</h3>
+        <p class="nota">Alumnos a los que conviene escribirles, con el motivo. "Dejó de venir" quiere decir que faltó a las últimas 2 clases dictadas. Con "Escribir mail" editás el texto y lo abrís en tu correo con los destinatarios en copia oculta.</p>
+        <div id="contactos"></div>
       </div>
     </section>
 
@@ -556,12 +560,13 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
   $('tab-asistencia').classList.toggle('hidden', t.dataset.tab !== 'asistencia');
   $('tab-tablero').classList.toggle('hidden', t.dataset.tab !== 'tablero');
+  $('tab-seguimiento').classList.toggle('hidden', t.dataset.tab !== 'seguimiento');
   $('tab-alumnos').classList.toggle('hidden', t.dataset.tab !== 'alumnos');
   $('tab-cronograma').classList.toggle('hidden', t.dataset.tab !== 'cronograma');
   $('tab-archivos').classList.toggle('hidden', t.dataset.tab !== 'archivos');
   $('tab-casos').classList.toggle('hidden', t.dataset.tab !== 'casos');
   $('tab-notas').classList.toggle('hidden', t.dataset.tab !== 'notas');
-  if(t.dataset.tab === 'tablero'){ renderTablero(); return; }
+  if(t.dataset.tab === 'tablero' || t.dataset.tab === 'seguimiento'){ renderTablero(); return; }
   if(t.dataset.tab === 'notas'){ renderNotas(); return; }
   if(t.dataset.tab === 'casos'){ renderCasos(); return; }
   if(t.dataset.tab === 'cronograma'){ renderCrono(); return; }
