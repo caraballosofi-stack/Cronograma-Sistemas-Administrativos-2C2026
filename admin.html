@@ -83,7 +83,28 @@
   .empty{padding:24px;text-align:center;color:var(--slate-soft);}
   .form-grid{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;padding:14px;margin-bottom:12px;}
   .form-grid label{margin-top:0;}
-  @media(max-width:640px){.form-grid{grid-template-columns:1fr 1fr;}.form-grid .wide{grid-column:1/-1;}.tog{min-width:88px;}}
+  .citem{background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;margin-bottom:8px;overflow:hidden;}
+  .citem.open{border-color:var(--navy);}
+  .chead{display:flex;align-items:center;gap:10px;padding:10px 14px;}
+  .chead .cdate{font-weight:700;color:var(--navy);min-width:52px;}
+  .chead .ctopic{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .badge{font-size:11px;font-weight:700;border-radius:6px;padding:3px 7px;white-space:nowrap;color:#fff;background:var(--navy);}
+  .badge.practica{background:var(--teal);} .badge.exam{background:var(--gold);color:var(--navy-deep);} .badge.holiday{background:var(--slate-soft);}
+  .cbody{padding:4px 14px 14px;border-top:1px solid var(--celeste);}
+  .cgrid{display:grid;grid-template-columns:1.4fr 1fr .7fr;gap:10px;}
+  .cbody textarea{width:100%;min-height:64px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--celeste-line);background:var(--paper);font-family:inherit;font-size:15px;color:var(--ink);resize:vertical;}
+  .cbody select.field{padding:11px 10px;}
+  .res{background:var(--paper);border:1px solid var(--celeste-line);border-radius:10px;padding:10px;margin-top:8px;display:grid;grid-template-columns:1.3fr .8fr auto;gap:8px;align-items:center;}
+  .res .dest{grid-column:1/-1;display:grid;grid-template-columns:.7fr 1.6fr .5fr;gap:8px;}
+  .res .field{padding:9px 10px;background:#fff;}
+  .res .ops{display:flex;gap:2px;}
+  .res .ops button{background:none;border:none;font-size:16px;padding:6px 8px;color:var(--navy);}
+  .cfoot{display:flex;gap:10px;justify-content:space-between;margin-top:12px;flex-wrap:wrap;}
+  .frow{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--celeste);}
+  .frow:last-child{border-bottom:none;}
+  .frow .who{flex:1;min-width:0;}
+  .frow a{color:var(--navy);font-weight:600;font-size:13px;text-decoration:none;}
+  @media(max-width:640px){.cgrid{grid-template-columns:1fr 1fr;}.cgrid .wide{grid-column:1/-1;}.res{grid-template-columns:1fr auto;}.res .dest{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr 1fr;}.form-grid .wide{grid-column:1/-1;}.tog{min-width:88px;}}
 </style>
 </head>
 <body>
@@ -135,6 +156,9 @@
     <div class="tabs">
       <button class="tab on" data-tab="asistencia" type="button">Asistencia</button>
       <button class="tab" data-tab="alumnos" type="button">Alumnos</button>
+      <button class="tab" data-tab="cronograma" type="button">Cronograma</button>
+      <button class="tab" data-tab="casos" type="button">Casos</button>
+      <button class="tab" data-tab="archivos" type="button">Archivos</button>
     </div>
 
     <section id="tab-asistencia">
@@ -163,6 +187,31 @@
       <div class="tools"><input type="search" id="buscar2" placeholder="Buscar por nombre, registro o DNI"><button class="btn btn-line" id="listadoBtn" type="button">Importar listado (CSV)</button><input type="file" id="listadoInput" accept=".csv,.txt" class="hidden"><span class="hint" id="totAlumnos" style="margin:0"></span></div>
       <div class="list" id="listaAlu"></div>
     </section>
+
+    <section id="tab-cronograma" class="hidden">
+      <div class="tools">
+        <button class="btn btn-line" id="addItemBtn" type="button">+ Agregar fecha</button>
+        <span class="hint" style="margin:0">Tocá una fecha para editarla. Los cambios se publican con "Guardar y publicar".</span>
+      </div>
+      <div id="listaCrono"><div class="empty">Cargando cronograma…</div></div>
+    </section>
+
+    <section id="tab-casos" class="hidden">
+      <div class="tools">
+        <button class="btn btn-line" id="addCasoBtn" type="button">+ Agregar caso</button>
+        <span class="hint" style="margin:0">Es lo que se ve en la página Casos Prácticos, en este orden. Se publica con "Guardar y publicar".</span>
+      </div>
+      <div id="listaCasos"><div class="empty">Cargando casos…</div></div>
+    </section>
+
+    <section id="tab-archivos" class="hidden">
+      <div class="tools">
+        <button class="btn btn-gold" id="upBtn" type="button">Subir archivos</button>
+        <input type="file" id="upInput" multiple class="hidden">
+        <span class="hint" id="upState" style="margin:0">PDF, videos o imágenes. Se publican apenas terminan de subir.</span>
+      </div>
+      <div class="list" id="listaArch"><div class="empty">Cargando archivos…</div></div>
+    </section>
   </main>
 </div>
 
@@ -172,6 +221,8 @@ const OWNER = "caraballosofi-stack";
 const REPO = "Cronograma-Sistemas-Administrativos-2C2026";
 const BRANCH = "main";
 const ARCH_PADRON = "padron.enc.json";        // padrón cifrado (nombres, registro, DNI)
+const ARCH_CASOS = "casos_data.json";         // lo que lee casos.html
+const ARCH_CRONO = "cronograma_data.json";    // lo que lee cronograma.html
 const ARCH_PUBLICO = "asistencia_data.json";  // lo que lee Mi Asistencia (solo hashes)
 const SALT = "SA-Saravia-2C2026";
 // Registros de Forms hechos desde estas cuentas se toman por los datos tipeados (carga manual de la docente)
@@ -285,10 +336,16 @@ async function escribirArchivo(path, texto, mensaje){
 
 // ---------- ESTADO ----------
 let padron = null;      // {version, alumnos:[{id,nombre,registro,dni,email,clases:[]}], legado:{hash:{clases_asistidas}}}
-let dirty = false;
+let dirty = false;        // hay algo sin guardar
+let dirtyAsis = false, dirtyCrono = false;
+let crono = null;         // {items:[...]} — lo que muestra cronograma.html
+let archivos = [];        // archivos publicados en el sitio [{name,size}]
+let dirtyCasos = false;
+let casos = null;         // [{titulo, archivo, form}] — lo que muestra casos.html
+let abierto = -1;         // índice de la fecha que se está editando
 let claseSel = 1;
 
-function marcarCambio(){ dirty = true; $('saveBtn').disabled = false; $('saveState').textContent = 'Cambios sin guardar'; $('saveState').classList.add('dirty'); }
+function marcarCambio(que){ if(que === 'crono') dirtyCrono = true; else if(que === 'casos') dirtyCasos = true; else dirtyAsis = true; dirty = true; $('saveBtn').disabled = false; $('saveState').textContent = 'Cambios sin guardar'; $('saveState').classList.add('dirty'); }
 function aviso(texto, tipo){ const m=$('appMsg'); if(!texto){ m.classList.add('hidden'); return; } m.className = 'msg ' + (tipo||'info'); m.textContent = texto; }
 function clasesHastaHoy(){ const h = hoyStr(); return SESIONES.filter(([n,f,ex]) => f <= h && !ex).map(([n]) => n); }
 function pctDe(a){
@@ -374,6 +431,7 @@ function entrar(){
   $('claseSel').value = claseSel;
   $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
   renderAsis(); renderAlu();
+  cargarCrono(); cargarCasos(); cargarArchivos();
 }
 $('logoutBtn').addEventListener('click', () => {
   if(dirty && !confirm('Hay cambios sin guardar. ¿Salir igual?')) return;
@@ -386,6 +444,12 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
   $('tab-asistencia').classList.toggle('hidden', t.dataset.tab !== 'asistencia');
   $('tab-alumnos').classList.toggle('hidden', t.dataset.tab !== 'alumnos');
+  $('tab-cronograma').classList.toggle('hidden', t.dataset.tab !== 'cronograma');
+  $('tab-archivos').classList.toggle('hidden', t.dataset.tab !== 'archivos');
+  $('tab-casos').classList.toggle('hidden', t.dataset.tab !== 'casos');
+  if(t.dataset.tab === 'casos'){ renderCasos(); return; }
+  if(t.dataset.tab === 'cronograma'){ renderCrono(); return; }
+  if(t.dataset.tab === 'archivos'){ renderArch(); return; }
   if(t.dataset.tab === 'alumnos') renderAlu(); else renderAsis();
 }));
 
@@ -571,19 +635,303 @@ $('listadoInput').addEventListener('change', async e => {
   }catch(err){ aviso(err.message || 'No se pudo leer el listado.', 'error'); }
 });
 
+// ---------- ARCHIVOS ----------
+const EXT_OK = /\.(pdf|mp4|png|jpe?g|gif|webp|docx?|pptx?|xlsx?|zip)$/i;
+const MAX_MB = 50;
+function tamano(n){ return n >= 1048576 ? (n/1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n/1024)) + ' KB'; }
+function nombreLimpio(n){
+  const i = n.lastIndexOf('.'); const base = i > 0 ? n.slice(0,i) : n, ext = i > 0 ? n.slice(i+1) : '';
+  const b = norm(base).replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'archivo';
+  return ext ? b + '.' + norm(ext).replace(/[^a-z0-9]/g, '') : b;
+}
+async function cargarArchivos(){
+  try{
+    const r = await gh(`/repos/${OWNER}/${REPO}/contents/?ref=${BRANCH}`);
+    if(!r.ok) throw new Error();
+    archivos = (await r.json()).filter(f => f.type === 'file' && EXT_OK.test(f.name)).map(f => ({name:f.name, size:f.size})).sort((a,b) => a.name.localeCompare(b.name));
+  }catch(e){ archivos = []; }
+  renderArch(); if(abierto >= 0) renderCrono(); renderCasos();
+}
+function usosDe(nombre){
+  const u = !crono ? [] : crono.items.filter(it => (it.resources || []).some(r => destinoDe(r.href).archivo === nombre)).map(it => it.num ? 'clase ' + it.num : fechaCorta(it.date));
+  const enCasos = (casos || []).some(c => c.archivo === nombre);
+  return {crono:u, casos:enCasos};
+}
+function renderArch(){
+  $('listaArch').innerHTML = archivos.length ? archivos.map(f => {
+    const u = usosDe(f.name);
+    return `<div class="frow"><div class="who"><div class="name">${esc(f.name)}</div><div class="sub">${tamano(f.size)}${u.crono.length ? ' · en el cronograma: ' + esc(u.crono.join(', ')) : ''}${u.casos ? ' · en Casos Prácticos' : ''}</div></div><a href="${esc(f.name)}" target="_blank" rel="noopener">Ver</a></div>`;
+  }).join('') : '<div class="empty">No hay archivos para mostrar.</div>';
+}
+// Sube uno o más archivos al sitio y devuelve los nombres con los que quedaron publicados
+async function subirArchivos(fileList){
+  const subidos = [];
+  for(const f of Array.from(fileList)){
+    const nombre = nombreLimpio(f.name);
+    if(!EXT_OK.test(nombre)){ aviso(`"${f.name}" no es un tipo de archivo admitido.`, 'error'); continue; }
+    if(f.size > MAX_MB*1048576){ aviso(`"${f.name}" pesa ${tamano(f.size)}; el máximo es ${MAX_MB} MB. Para videos grandes conviene subirlos a YouTube y agregar el link.`, 'error'); continue; }
+    if(archivos.some(a => a.name === nombre) && !confirm(`Ya existe "${nombre}" en el sitio. ¿Reemplazarlo?`)) continue;
+    $('upState').textContent = `Subiendo ${nombre} (${tamano(f.size)})…`; aviso(`Subiendo ${nombre}…`, 'info');
+    try{
+      const contenido = b64(new Uint8Array(await f.arrayBuffer()));
+      const act = await gh(`/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(nombre)}?ref=${BRANCH}`);
+      const sha = act.ok ? (await act.json()).sha : undefined;
+      const r = await gh(`/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(nombre)}`, {method:'PUT', body:JSON.stringify({message:`Admin: archivo ${nombre}`, content:contenido, branch:BRANCH, ...(sha?{sha}:{})})});
+      if(!r.ok) throw new Error('GitHub respondió ' + r.status);
+      subidos.push(nombre);
+      archivos = archivos.filter(a => a.name !== nombre).concat({name:nombre, size:f.size}).sort((a,b) => a.name.localeCompare(b.name));
+    }catch(e){ aviso(`No se pudo subir "${f.name}": ${e.message || 'error de conexión'}.`, 'error'); }
+  }
+  $('upState').textContent = 'PDF, videos o imágenes. Se publican apenas terminan de subir.';
+  if(subidos.length) aviso(`Subido: ${subidos.join(', ')}. En el sitio queda disponible en un minuto o dos.`, 'ok');
+  renderArch();
+  return subidos;
+}
+$('upBtn').addEventListener('click', () => $('upInput').click());
+$('upInput').addEventListener('change', async e => { const fs = e.target.files; if(fs.length) await subirArchivos(fs); e.target.value = ''; });
+
+// ---------- CRONOGRAMA ----------
+const TIPOS = {intro:'Presentación', class:'Clase teórica', practica:'Práctica integradora', exam:'Parcial / final', holiday:'Feriado'};
+const ESTILOS = {'':'Material', mintz:'Mintzberg', caso:'Caso', form:'Formulario', video:'Video'};
+async function cargarCrono(){
+  try{
+    const arch = await leerArchivo(ARCH_CRONO);
+    if(arch){ crono = JSON.parse(arch.texto); }
+    else{
+      // Todavía no se guardó nunca: se parte del cronograma embebido en cronograma.html
+      const html = await leerArchivo('cronograma.html');
+      const m = html && html.texto.match(/<script type="application\/json" id="cronograma-base">([\s\S]*?)<\/script>/);
+      if(!m) throw new Error('falta-base');
+      crono = JSON.parse(m[1]);
+    }
+    crono.items.sort((x,y) => x.date < y.date ? -1 : x.date > y.date ? 1 : 0);
+  }catch(e){
+    crono = null;
+    $('listaCrono').innerHTML = `<div class="msg error" style="margin:0">${e.message === 'falta-base' ? 'Para editar el cronograma desde acá, primero hay que subir al sitio la versión nueva de cronograma.html.' : 'No se pudo cargar el cronograma. Recargá la página.'}</div>`;
+    return;
+  }
+  renderCrono(); renderArch();
+}
+function estiloDe(r){ return r.mintz ? 'mintz' : r.form ? 'form' : r.caso ? 'caso' : r.video ? 'video' : ''; }
+function destinoDe(href){
+  href = String(href || '');
+  if(!href) return {tipo:'archivo', archivo:'', pagina:''};
+  let m = href.match(/^web\/viewer\.html\?file=\.\.\/(.+?)(?:#page=(\d+))?$/);
+  if(m) return {tipo:'archivo', archivo:decodeURIComponent(m[1]), pagina:m[2] || '1'};
+  if(href && !/^[a-z]+:/i.test(href) && !href.startsWith('//')) return {tipo:'archivo', archivo:href, pagina:''};
+  return {tipo:'link', url:href};
+}
+function hrefDe(archivo, pagina){
+  if(!archivo) return '';
+  return /\.pdf$/i.test(archivo) ? `web/viewer.html?file=../${archivo}#page=${Math.max(1, parseInt(pagina,10) || 1)}` : archivo;
+}
+function renderCrono(){
+  if(!crono) return;
+  $('listaCrono').innerHTML = crono.items.map((it,i) => {
+    const hol = it.type === 'holiday';
+    const head = `<div class="chead"><span class="cdate">${fechaCorta(it.date)}</span><span class="badge ${it.type}">${hol ? 'Feriado' : (it.type === 'exam' ? 'Examen' : 'Clase') + (it.num ? ' ' + esc(it.num) : '')}</span><span class="ctopic">${esc(hol ? it.label : it.topic)}</span><button type="button" class="mini" data-act="abrir" data-i="${i}">${abierto === i ? 'Cerrar' : 'Editar'}</button></div>`;
+    if(abierto !== i) return `<div class="citem">${head}</div>`;
+    const recursos = (it.resources || []).map((r,j) => {
+      const d = destinoDe(r.href), est = estiloDe(r);
+      const opcionesArch = archivos.map(a => `<option value="${esc(a.name)}" ${d.archivo === a.name ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
+      const falta = d.tipo === 'archivo' && d.archivo && !archivos.some(a => a.name === d.archivo) ? `<option value="${esc(d.archivo)}" selected>${esc(d.archivo)}</option>` : '';
+      const dest = d.tipo === 'archivo'
+        ? `<select class="field" data-f="archivo" data-j="${j}" aria-label="Archivo"><option value="">Elegí un archivo…</option>${falta}${opcionesArch}<option value="__subir__">⬆ Subir un archivo nuevo…</option></select><input class="field" data-f="pagina" data-j="${j}" type="number" min="1" value="${esc(d.pagina)}" placeholder="Pág." aria-label="Página" ${/\.pdf$/i.test(d.archivo || '') ? '' : 'disabled'}>`
+        : `<input class="field" data-f="url" data-j="${j}" type="url" value="${esc(d.url)}" placeholder="https://…" aria-label="Link" style="grid-column:span 2">`;
+      return `<div class="res">
+        <input class="field" data-f="label" data-j="${j}" value="${esc(r.label)}" placeholder="Texto del botón" aria-label="Texto del botón">
+        <select class="field" data-f="estilo" data-j="${j}" aria-label="Tipo de recurso">${Object.entries(ESTILOS).map(([k,v]) => `<option value="${k}" ${est === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <span class="ops"><button type="button" data-act="subir" data-j="${j}" title="Subir" aria-label="Mover arriba">↑</button><button type="button" data-act="bajar" data-j="${j}" title="Bajar" aria-label="Mover abajo">↓</button><button type="button" data-act="quitar" data-j="${j}" title="Quitar" aria-label="Quitar" style="color:var(--red)">✕</button></span>
+        <div class="dest"><select class="field" data-f="tipo" data-j="${j}" aria-label="Destino"><option value="archivo" ${d.tipo === 'archivo' ? 'selected' : ''}>Archivo del sitio</option><option value="link" ${d.tipo === 'link' ? 'selected' : ''}>Link externo</option></select>${dest}</div>
+      </div>`;
+    }).join('');
+    return `<div class="citem open" data-i="${i}">${head}<div class="cbody">
+      <div class="cgrid">
+        <div><label>Tipo</label><select class="field" data-f="type">${Object.entries(TIPOS).map(([k,v]) => `<option value="${k}" ${it.type === k ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+        <div><label>Fecha</label><input class="field" data-f="date" type="date" value="${esc(it.date)}"></div>
+        ${hol ? '' : `<div><label>N° de clase</label><input class="field" data-f="num" type="number" min="1" value="${esc(it.num ?? '')}"></div>`}
+      </div>
+      <label>${hol ? 'Descripción del feriado' : 'Tema'}</label>
+      <textarea data-f="${hol ? 'label' : 'topic'}">${esc(hol ? it.label : it.topic)}</textarea>
+      ${hol ? '' : `<label>Material de la clase</label>${recursos || '<p class="hint" style="margin:0">Todavía no tiene material.</p>'}`}
+      <div class="cfoot">${hol ? '<span></span>' : '<button type="button" class="btn btn-line" data-act="masrec">+ Agregar material</button>'}<button type="button" class="mini del" data-act="borrar">Eliminar esta fecha</button></div>
+    </div></div>`;
+  }).join('') || '<div class="empty">El cronograma está vacío.</div>';
+}
+function setEstilo(r, est){ delete r.mintz; delete r.form; delete r.caso; delete r.video; if(est) r[est] = true; }
+$('listaCrono').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const act = b.dataset.act;
+  if(act === 'abrir'){ const i = Number(b.dataset.i); abierto = abierto === i ? -1 : i; renderCrono(); return; }
+  const it = crono.items[abierto]; if(!it) return;
+  const j = Number(b.dataset.j), rs = it.resources || (it.resources = []);
+  if(act === 'masrec') rs.push({label:'', href:''});
+  if(act === 'quitar') rs.splice(j,1);
+  if(act === 'subir' && j > 0) [rs[j-1], rs[j]] = [rs[j], rs[j-1]];
+  if(act === 'bajar' && j < rs.length-1) [rs[j+1], rs[j]] = [rs[j], rs[j+1]];
+  if(act === 'borrar'){
+    if(!confirm('¿Eliminar esta fecha del cronograma?')) return;
+    crono.items.splice(abierto,1); abierto = -1;
+  }
+  marcarCambio('crono'); renderCrono();
+});
+// Texto: se guarda mientras se escribe, sin redibujar
+$('listaCrono').addEventListener('input', e => {
+  const f = e.target.dataset.f, it = crono.items[abierto]; if(!f || !it) return;
+  const j = e.target.dataset.j;
+  if(j === undefined){
+    if(f === 'topic' || f === 'label') it[f] = e.target.value;
+    else if(f === 'num') it.num = e.target.value === '' ? undefined : Number(e.target.value);
+    else return;
+  }else{
+    const r = it.resources[Number(j)];
+    if(f === 'label') r.label = e.target.value;
+    else if(f === 'url') r.href = e.target.value.trim();
+    else if(f === 'pagina') r.href = hrefDe(destinoDe(r.href).archivo, e.target.value);
+    else return;
+  }
+  marcarCambio('crono');
+});
+// Selectores y fecha: cambian la estructura, se redibuja
+$('listaCrono').addEventListener('change', async e => {
+  const f = e.target.dataset.f, it = crono.items[abierto]; if(!f || !it) return;
+  const j = e.target.dataset.j, v = e.target.value;
+  if(j === undefined){
+    if(f === 'type'){
+      const eraFeriado = it.type === 'holiday'; it.type = v;
+      if(v === 'holiday'){ it.label = it.label || it.topic || 'Feriado'; delete it.topic; delete it.num; delete it.resources; }
+      else if(eraFeriado){ it.topic = it.topic || it.label || ''; delete it.label; it.resources = it.resources || []; }
+    }else if(f === 'date'){
+      if(!v) return;
+      it.date = v; crono.items.sort((x,y) => x.date < y.date ? -1 : x.date > y.date ? 1 : 0); abierto = crono.items.indexOf(it);
+    }else return;
+  }else{
+    const r = it.resources[Number(j)];
+    if(f === 'estilo') setEstilo(r, v);
+    else if(f === 'tipo') r.href = '';
+    else if(f === 'archivo'){
+      if(v === '__subir__'){
+        const inp = document.createElement('input'); inp.type = 'file';
+        inp.onchange = async () => {
+          if(!inp.files.length){ renderCrono(); return; }
+          const [nombre] = await subirArchivos(inp.files);
+          if(nombre){ r.href = hrefDe(nombre, 1); if(/\.mp4$/i.test(nombre)) setEstilo(r, 'video'); marcarCambio('crono'); }
+          renderCrono();
+        };
+        inp.oncancel = () => renderCrono();
+        inp.click(); return;
+      }
+      r.href = hrefDe(v, 1);
+    }else return;
+    if(f === 'tipo' && v === 'link') r.href = 'https://';
+  }
+  marcarCambio('crono'); renderCrono();
+});
+$('addItemBtn').addEventListener('click', () => {
+  if(!crono) return;
+  const hoy = hoyStr(); const nums = crono.items.map(x => Number(x.num) || 0);
+  const it = {type:'class', num:Math.max(0, ...nums) + 1, date:hoy, topic:'', resources:[]};
+  crono.items.push(it); crono.items.sort((x,y) => x.date < y.date ? -1 : x.date > y.date ? 1 : 0);
+  abierto = crono.items.indexOf(it); marcarCambio('crono'); renderCrono();
+  const el = document.querySelector('.citem.open'); if(el) el.scrollIntoView({block:'center'});
+});
+
+// ---------- CASOS PRÁCTICOS ----------
+async function cargarCasos(){
+  try{
+    const arch = await leerArchivo(ARCH_CASOS);
+    if(arch){ casos = JSON.parse(arch.texto).casos; }
+    else{
+      const html = await leerArchivo('casos.html');
+      const m = html && html.texto.match(/<script type="application\/json" id="casos-base">([\s\S]*?)<\/script>/);
+      if(!m) throw new Error('falta-base');
+      casos = JSON.parse(m[1]).casos;
+    }
+  }catch(e){
+    casos = null;
+    $('listaCasos').innerHTML = `<div class="msg error" style="margin:0">${e.message === 'falta-base' ? 'Para editar los casos desde acá, primero hay que subir al sitio la versión nueva de casos.html.' : 'No se pudieron cargar los casos. Recargá la página.'}</div>`;
+    return;
+  }
+  renderCasos(); renderArch();
+}
+function renderCasos(){
+  if(!casos) return;
+  $('listaCasos').innerHTML = casos.map((c,i) => {
+    const opciones = archivos.map(a => `<option value="${esc(a.name)}" ${c.archivo === a.name ? 'selected' : ''}>${esc(a.name)}</option>`).join('');
+    const falta = c.archivo && !archivos.some(a => a.name === c.archivo) ? `<option value="${esc(c.archivo)}" selected>${esc(c.archivo)}</option>` : '';
+    return `<div class="res" data-i="${i}" style="background:#fff;border-width:1.5px;border-radius:12px;padding:14px;grid-template-columns:1fr auto">
+      <input class="field" data-f="titulo" value="${esc(c.titulo)}" placeholder="Nombre del caso" aria-label="Nombre del caso" style="font-weight:600">
+      <span class="ops"><button type="button" data-act="subir" title="Subir" aria-label="Mover arriba">↑</button><button type="button" data-act="bajar" title="Bajar" aria-label="Mover abajo">↓</button><button type="button" data-act="quitar" title="Quitar" aria-label="Quitar" style="color:var(--red)">✕</button></span>
+      <div class="dest" style="grid-template-columns:1fr 1fr">
+        <select class="field" data-f="archivo" aria-label="Consignas"><option value="">Consignas: elegí un archivo…</option>${falta}${opciones}<option value="__subir__">⬆ Subir un archivo nuevo…</option></select>
+        <input class="field" data-f="form" type="url" value="${esc(c.form)}" placeholder="Link del formulario (opcional)" aria-label="Link del formulario">
+      </div>
+    </div>`;
+  }).join('') || '<div class="empty">Todavía no hay casos.</div>';
+}
+$('addCasoBtn').addEventListener('click', () => {
+  if(!casos) return;
+  casos.push({titulo:'', archivo:'', form:''}); marcarCambio('casos'); renderCasos();
+  const ins = document.querySelectorAll('#listaCasos [data-f=titulo]'); const u = ins[ins.length-1]; if(u){ u.scrollIntoView({block:'center'}); u.focus(); }
+});
+$('listaCasos').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if(!b) return;
+  const i = Number(b.closest('[data-i]').dataset.i), act = b.dataset.act;
+  if(act === 'quitar'){ if(!confirm(`¿Quitar "${casos[i].titulo || 'este caso'}" de Casos Prácticos? El archivo no se borra.`)) return; casos.splice(i,1); }
+  else if(act === 'subir' && i > 0) [casos[i-1], casos[i]] = [casos[i], casos[i-1]];
+  else if(act === 'bajar' && i < casos.length-1) [casos[i+1], casos[i]] = [casos[i], casos[i+1]];
+  else return;
+  marcarCambio('casos'); renderCasos();
+});
+$('listaCasos').addEventListener('input', e => {
+  const f = e.target.dataset.f; if(f !== 'titulo' && f !== 'form') return;
+  casos[Number(e.target.closest('[data-i]').dataset.i)][f] = f === 'form' ? e.target.value.trim() : e.target.value;
+  marcarCambio('casos');
+});
+$('listaCasos').addEventListener('change', e => {
+  if(e.target.dataset.f !== 'archivo') return;
+  const c = casos[Number(e.target.closest('[data-i]').dataset.i)], v = e.target.value;
+  if(v === '__subir__'){
+    const inp = document.createElement('input'); inp.type = 'file';
+    inp.onchange = async () => {
+      if(inp.files.length){ const [nombre] = await subirArchivos(inp.files); if(nombre){ c.archivo = nombre; marcarCambio('casos'); } }
+      renderCasos();
+    };
+    inp.oncancel = () => renderCasos();
+    inp.click(); return;
+  }
+  c.archivo = v; marcarCambio('casos');
+});
+
 // ---------- GUARDAR ----------
 $('saveBtn').addEventListener('click', async () => {
   $('saveBtn').disabled = true; $('saveState').textContent = 'Guardando…';
   try{
-    const publico = JSON.stringify(await construirPublico());
-    const cifrado = await cifrar(padron, PASS);
-    const cuando = new Date().toLocaleString('es-AR');
-    await escribirArchivo(ARCH_PADRON, cifrado, `Admin: padrón actualizado (${cuando})`);
-    await escribirArchivo(ARCH_PUBLICO, publico, `Admin: asistencia actualizada (${cuando})`);
+    const cuando = new Date().toLocaleString('es-AR'); const hecho = [];
+    if(dirtyAsis){
+      const publico = JSON.stringify(await construirPublico());
+      const cifrado = await cifrar(padron, PASS);
+      await escribirArchivo(ARCH_PADRON, cifrado, `Admin: padrón actualizado (${cuando})`);
+      await escribirArchivo(ARCH_PUBLICO, publico, `Admin: asistencia actualizada (${cuando})`);
+      dirtyAsis = false; hecho.push('la asistencia');
+    }
+    if(dirtyCasos){
+      const mal = casos.find(c => !String(c.titulo || '').trim() || (!c.archivo && !c.form));
+      if(mal) throw new Error(`hay un caso sin nombre o sin consignas ni formulario${mal.titulo ? ' (' + mal.titulo + ')' : ''}. Completalo o quitalo.`);
+      await escribirArchivo(ARCH_CASOS, JSON.stringify({casos}, null, 1), `Admin: casos actualizados (${cuando})`);
+      dirtyCasos = false; hecho.push('los casos');
+    }
+    if(dirtyCrono){
+      const incompleta = crono.items.find(it => (it.resources || []).some(r => !String(r.label || '').trim() || !r.href || r.href === 'https://'));
+      if(incompleta) throw new Error(`hay material sin texto o sin destino en la fecha ${fechaCorta(incompleta.date)}. Completalo o quitalo.`);
+      crono.items.sort((x,y) => x.date < y.date ? -1 : x.date > y.date ? 1 : 0);
+      await escribirArchivo(ARCH_CRONO, JSON.stringify({items:crono.items}, null, 1), `Admin: cronograma actualizado (${cuando})`);
+      dirtyCrono = false; hecho.push('el cronograma'); abierto = -1; renderCrono();
+    }
     dirty = false; $('saveState').textContent = 'Guardado ' + new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); $('saveState').classList.remove('dirty');
-    aviso('Guardado. Los alumnos lo ven en Mi Asistencia en un minuto o dos.', 'ok');
+    aviso(`Guardado: ${hecho.join(', ')}. En el sitio se ve en un minuto o dos.`, 'ok');
   }catch(e){
-    $('saveBtn').disabled = false; $('saveState').textContent = 'Cambios sin guardar';
+    dirty = dirtyAsis || dirtyCrono || dirtyCasos; $('saveBtn').disabled = !dirty; $('saveState').textContent = 'Cambios sin guardar';
     aviso('No se pudo guardar: ' + (e.message || 'error de conexión') + ' Tus cambios siguen en esta pantalla; probá de nuevo.', 'error');
   }
 });

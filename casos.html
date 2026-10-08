@@ -63,44 +63,27 @@
   <h1>Casos Prácticos</h1>
 </header>
 
-<main>
-  <div class="item">
-    <h2>Havanna</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_1_havanna.pdf#page=1">Abrir consignas</a>
-    <a class="btn" href="https://forms.cloud.microsoft/r/fbZpRKGeTd" target="_blank" rel="noopener">Completar formulario</a>
-  </div>
+<main id="casos-root"></main>
 
+<script type="application/json" id="casos-base">{"casos": [{"titulo": "Havanna", "archivo": "caso_1_havanna.pdf", "form": "https://forms.cloud.microsoft/r/fbZpRKGeTd"}, {"titulo": "¡Helado, Helado!", "archivo": "caso_2_helado.pdf", "form": "https://forms.cloud.microsoft/r/RcHejP53iv"}, {"titulo": "El Almacén", "archivo": "caso_3_el_almacen.pdf", "form": ""}, {"titulo": "El Almacén V2", "archivo": "caso_3_el_almacen_v2.pdf", "form": ""}, {"titulo": "Sanatorios San Gabriel", "archivo": "caso_4_sanatorio_san_gabriel.pdf", "form": ""}, {"titulo": "Nutribaby", "archivo": "caso_5_nutribaby.pdf", "form": ""}, {"titulo": "Bloque", "archivo": "caso_6_bloque.pdf", "form": ""}]}</script>
+<script>
+// Los casos de base están embebidos arriba; si existe casos_data.json (lo guarda el admin), se usa ese.
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function hrefArchivo(a){ return /\.pdf$/i.test(a) ? 'web/viewer.html?file=../' + a + '#page=1' : a; }
+function render(casos){
+  document.getElementById('casos-root').innerHTML = casos.map(c => `
   <div class="item">
-    <h2>¡Helado, Helado!</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_2_helado.pdf#page=1">Abrir consignas</a>
-    <a class="btn" href="https://forms.cloud.microsoft/r/RcHejP53iv" target="_blank" rel="noopener">Completar formulario</a>
-  </div>
-
-  <div class="item">
-    <h2>El Almacén</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_3_el_almacen.pdf#page=1">Abrir consignas</a>
-  </div>
-
-  <div class="item">
-    <h2>El Almacén V2</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_3_el_almacen_v2.pdf#page=1">Abrir consignas</a>
-  </div>
-
-  <div class="item">
-    <h2>Sanatorios San Gabriel</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_4_sanatorio_san_gabriel.pdf#page=1">Abrir consignas</a>
-  </div>
-
-  <div class="item">
-    <h2>Nutribaby</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_5_nutribaby.pdf#page=1">Abrir consignas</a>
-  </div>
-
-  <div class="item">
-    <h2>Bloque</h2>
-    <a class="btn primary" href="web/viewer.html?file=../caso_6_bloque.pdf#page=1">Abrir consignas</a>
-  </div>
-</main>
+    <h2>${esc(c.titulo)}</h2>
+    ${c.archivo ? `<a class="btn primary" href="${esc(hrefArchivo(c.archivo))}">Abrir consignas</a>` : ''}
+    ${c.form ? `<a class="btn" href="${esc(c.form)}" target="_blank" rel="noopener">Completar formulario</a>` : ''}
+  </div>`).join('');
+}
+render(JSON.parse(document.getElementById('casos-base').textContent).casos);
+fetch('casos_data.json?v=' + Date.now())
+  .then(r => r.ok ? r.json() : null)
+  .then(d => { if(d && Array.isArray(d.casos)) render(d.casos); })
+  .catch(() => {});
+</script>
 
 </body>
 </html>
