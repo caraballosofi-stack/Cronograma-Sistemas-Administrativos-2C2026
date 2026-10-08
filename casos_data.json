@@ -1,0 +1,44 @@
+{
+ "casos": [
+  {
+   "titulo": "Havanna",
+   "archivo": "caso_1_havanna.pdf",
+   "form": "https://forms.cloud.microsoft/r/fbZpRKGeTd"
+  },
+  {
+   "titulo": "¡Helado, Helado!",
+   "archivo": "caso_2_helado.pdf",
+   "form": "https://forms.cloud.microsoft/r/RcHejP53iv"
+  },
+  {
+   "titulo": "El Almacén",
+   "archivo": "caso_3_el_almacen.pdf",
+   "form": ""
+  },
+  {
+   "titulo": "El Almacén V2",
+   "archivo": "caso_3_el_almacen_v2.pdf",
+   "form": ""
+  },
+  {
+   "titulo": "Sanatorios San Gabriel",
+   "archivo": "caso_4_sanatorio_san_gabriel.pdf",
+   "form": ""
+  },
+  {
+   "titulo": "Nutribaby",
+   "archivo": "caso_5_nutribaby.pdf",
+   "form": ""
+  },
+  {
+   "titulo": "Bloque",
+   "archivo": "caso_6_bloque.pdf",
+   "form": ""
+  },
+  {
+   "titulo": "Papel Reciclado",
+   "archivo": "caso_7_papel_reciclado.pdf",
+   "form": ""
+  }
+ ]
+}
