@@ -1,0 +1,427 @@
+{
+ "items": [
+  {
+   "type": "intro",
+   "num": 1,
+   "date": "2026-08-13",
+   "topic": "Presentación de la materia. Test diagnóstico",
+   "resources": [
+    {
+     "label": "Ficha del Estudiante",
+     "href": "https://forms.cloud.microsoft/r/mqJ0E6WpCv",
+     "form": true
+    },
+    {
+     "label": "Test Diagnóstico",
+     "href": "https://forms.cloud.microsoft/r/EUgn1JBBrK",
+     "form": true
+    },
+    {
+     "label": "Clase 1 · PDF",
+     "href": "web/viewer.html?file=../clase_1_2c26.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "holiday",
+   "date": "2026-08-17",
+   "label": "Feriado · Paso a la inmortalidad del Gral. José de San Martín"
+  },
+  {
+   "type": "class",
+   "num": 2,
+   "date": "2026-08-20",
+   "topic": "Introducción a la Teoría General de los Sistemas. La organización como sistema abierto. Diagrama de bloque global. Actividad Entradas y Salidas",
+   "resources": [
+    {
+     "label": "Apunte · Introducción",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=3"
+    },
+    {
+     "label": "Apunte · Capítulo 1",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=5"
+    },
+    {
+     "label": "Clase 2 · PDF",
+     "href": "web/viewer.html?file=../clase_2_2c26.pdf#page=1"
+    },
+    {
+     "label": "Consignas · Caso 1 Havanna",
+     "href": "web/viewer.html?file=../caso_1_havanna.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 3,
+   "date": "2026-08-24",
+   "topic": "La actividad principal. Proceso y Procedimiento – Actividad y Tarea – Mapa de Procesos",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 2",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=19"
+    },
+    {
+     "label": "Clase 3 · PDF",
+     "href": "web/viewer.html?file=../clase_3_2c26.pdf#page=1"
+    },
+    {
+     "label": "Consignas · Caso ¡Helado, Helado!",
+     "href": "web/viewer.html?file=../caso_2_helado.pdf#page=1",
+     "caso": true
+    },
+    {
+     "label": "Rellenar formulario · Caso ¡Helado, Helado!",
+     "href": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=Uh4_4TJuckmCyml0IO48mB_pjY_wodRKie6g84Taed1UN1gxQ1k3WkJSTU9UMUdQUkkxMkZUREFOOS4u",
+     "form": true
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 4,
+   "date": "2026-08-27",
+   "topic": "Sistema Productivo – Ambiente estable-dinámico. Estandarización – Organizaciones burocráticas y orgánicas",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 2",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=19"
+    },
+    {
+     "label": "Apunte · Capítulo 3",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=27"
+    },
+    {
+     "label": "Mintzberg · Capítulo 6 – Diseño en contexto",
+     "href": "web/viewer.html?file=../mintzberg_understanding_organizations.pdf#page=34",
+     "mintz": true
+    },
+    {
+     "label": "Clase 4 · PDF",
+     "href": "web/viewer.html?file=../clase_4_2c26.pdf#page=1"
+    },
+    {
+     "label": "Rellenar formulario · Caso Producción de Alfajores",
+     "href": "https://forms.cloud.microsoft/r/fbZpRKGeTd",
+     "form": true
+    },
+    {
+     "label": "Video · Caso Producción de Alfajores",
+     "href": "https://www.youtube.com/watch?v=J-QthgW7wQU",
+     "video": true
+    },
+    {
+     "label": "Video · Vida y muerte en un almacén",
+     "href": "https://www.youtube.com/watch?v=547MsZNtW_k",
+     "video": true
+    },
+    {
+     "label": "Video · Empresa de diseño",
+     "href": "video_caso_diseno.mp4",
+     "video": true
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 5,
+   "date": "2026-08-31",
+   "topic": "Tipos de Sistemas Productivos – Estrategias de Producción – Sistema Técnico",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 2",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=19"
+    },
+    {
+     "label": "Apunte · Sistema de Producción",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=68"
+    },
+    {
+     "label": "Clase 5 · PDF",
+     "href": "web/viewer.html?file=../clase_5_2c26.pdf#page=1"
+    },
+    {
+     "label": "Consignas · Caso El Almacén",
+     "href": "web/viewer.html?file=../caso_3_el_almacen.pdf#page=1",
+     "caso": true
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 6,
+   "date": "2026-09-03",
+   "topic": "Puesto de trabajo – Ambiente simple y complejo – Descentralización – Relación con Sistema Técnico – Caso Práctico",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 4",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=34"
+    },
+    {
+     "label": "Mintzberg · Capítulo 5 – Los elementos del diseño",
+     "href": "web/viewer.html?file=../mintzberg_understanding_organizations.pdf#page=27",
+     "mintz": true
+    },
+    {
+     "label": "Clase 6 · PDF",
+     "href": "web/viewer.html?file=../clase_6_2c26.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 7,
+   "date": "2026-09-07",
+   "topic": "Agrupamientos – Departamentalización – Organigrama – Caso Práctico",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 5",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=40"
+    },
+    {
+     "label": "Mintzberg · Capítulo 5 – Los elementos del diseño",
+     "href": "web/viewer.html?file=../mintzberg_understanding_organizations.pdf#page=27",
+     "mintz": true
+    },
+    {
+     "label": "Caso El Almacén · Consignas V2",
+     "href": "web/viewer.html?file=../caso_3_el_almacen_v2.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 8,
+   "date": "2026-09-10",
+   "topic": "Modelos Organizacionales – Esquema de Fuerzas",
+   "resources": [
+    {
+     "label": "Mintzberg · Capítulos 7 a 13",
+     "href": "web/viewer.html?file=../mintzberg_understanding_organizations.pdf#page=36",
+     "mintz": true
+    },
+    {
+     "label": "Clase 8 · PDF",
+     "href": "web/viewer.html?file=../clase_8_2c26.pdf#page=1"
+    },
+    {
+     "label": "Caso Bloque · Consignas",
+     "href": "web/viewer.html?file=../caso_6_bloque.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "practica",
+   "num": 9,
+   "date": "2026-09-14",
+   "topic": "Práctica integradora",
+   "resources": [
+    {
+     "label": "Clase 9 · PDF",
+     "href": "web/viewer.html?file=../clase_9_2c26.pdf#page=1"
+    },
+    {
+     "label": "Caso Sanatorios San Gabriel · Consignas",
+     "href": "web/viewer.html?file=../caso_4_sanatorio_san_gabriel.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "practica",
+   "num": 10,
+   "date": "2026-09-17",
+   "topic": "Práctica integradora",
+   "resources": [
+    {
+     "label": "Caso Nutribaby · Consignas",
+     "href": "web/viewer.html?file=../caso_5_nutribaby.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "holiday",
+   "date": "2026-09-21",
+   "label": "Feriado · Día del Estudiante"
+  },
+  {
+   "type": "exam",
+   "num": 11,
+   "date": "2026-09-24",
+   "topic": "1er. Parcial",
+   "resources": []
+  },
+  {
+   "type": "exam",
+   "num": 12,
+   "date": "2026-09-28",
+   "topic": "Devolución 1er. Parcial – Entrega de notas",
+   "resources": []
+  },
+  {
+   "type": "class",
+   "num": 13,
+   "date": "2026-10-01",
+   "topic": "Introducción a los Sistemas Administrativos – Sistemas de Planificación, Información y Control",
+   "resources": [
+    {
+     "label": "Apunte · Capítulo 6",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=45"
+    },
+    {
+     "label": "Clase 13 · PDF",
+     "href": "web/viewer.html?file=../clase_13_sistemas_transversales.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 14,
+   "date": "2026-10-05",
+   "topic": "Repaso Proceso y Procedimiento – Diagramas de representación",
+   "resources": [
+    {
+     "label": "Clase 14 · PDF",
+     "href": "web/viewer.html?file=../clase_14_2c26.pdf#page=1"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 15,
+   "date": "2026-10-08",
+   "topic": "Sistema de Producción – Caso",
+   "resources": [
+    {
+     "label": "Apunte · Sistema de Producción",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=68"
+    }
+   ]
+  },
+  {
+   "type": "holiday",
+   "date": "2026-10-12",
+   "label": "Feriado · Día del Respeto a la Diversidad Cultural"
+  },
+  {
+   "type": "class",
+   "num": 16,
+   "date": "2026-10-15",
+   "topic": "Sistema de Compras – Caso",
+   "resources": [
+    {
+     "label": "Apunte · Sistema de Compras",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=69"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 17,
+   "date": "2026-10-19",
+   "topic": "Sistema de Pagos – Caso",
+   "resources": [
+    {
+     "label": "Apunte · Sistema de Pagos",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=74"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 18,
+   "date": "2026-10-22",
+   "topic": "Sistema de Ventas – Caso",
+   "resources": [
+    {
+     "label": "Apunte · Sistemas de Ventas",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=79"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 19,
+   "date": "2026-10-26",
+   "topic": "Sistema de Cobranzas – Caso",
+   "resources": [
+    {
+     "label": "Apunte · Sistema de Cobranzas",
+     "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=84"
+    }
+   ]
+  },
+  {
+   "type": "class",
+   "num": 20,
+   "date": "2026-10-29",
+   "topic": "Transformación Digital en las organizaciones",
+   "resources": []
+  },
+  {
+   "type": "practica",
+   "num": 21,
+   "date": "2026-11-02",
+   "topic": "Práctica integradora",
+   "resources": []
+  },
+  {
+   "type": "practica",
+   "num": 22,
+   "date": "2026-11-05",
+   "topic": "Práctica integradora",
+   "resources": []
+  },
+  {
+   "type": "practica",
+   "num": 23,
+   "date": "2026-11-09",
+   "topic": "Práctica integradora",
+   "resources": []
+  },
+  {
+   "type": "exam",
+   "num": 24,
+   "date": "2026-11-12",
+   "topic": "2do. Parcial",
+   "resources": []
+  },
+  {
+   "type": "exam",
+   "num": 25,
+   "date": "2026-11-16",
+   "topic": "Devolución 2do. Parcial – Entrega de notas",
+   "resources": []
+  },
+  {
+   "type": "practica",
+   "num": 26,
+   "date": "2026-11-19",
+   "topic": "Práctica integradora",
+   "resources": []
+  },
+  {
+   "type": "holiday",
+   "date": "2026-11-23",
+   "label": "Feriado · Día de la Soberanía Nacional"
+  },
+  {
+   "type": "exam",
+   "num": 27,
+   "date": "2026-11-26",
+   "topic": "Recuperatorio",
+   "resources": []
+  },
+  {
+   "type": "holiday",
+   "date": "2026-11-30",
+   "label": "Feriado · Día con fines turísticos"
+  },
+  {
+   "type": "exam",
+   "num": 28,
+   "date": "2026-12-03",
+   "topic": "Final",
+   "resources": []
+  }
+ ]
+}
