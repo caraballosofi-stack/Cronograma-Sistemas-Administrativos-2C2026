@@ -83,6 +83,31 @@
   .empty{padding:24px;text-align:center;color:var(--slate-soft);}
   .form-grid{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;padding:14px;margin-bottom:12px;}
   .form-grid label{margin-top:0;}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:14px;}
+  .kpi{background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;padding:14px 16px;}
+  .kpi .l{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate);}
+  .kpi .v{font-family:'Lora',serif;font-size:32px;font-weight:600;color:var(--navy);line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums;}
+  .kpi .s{font-size:12.5px;color:var(--slate-soft);margin-top:2px;}
+  .kpi.alerta{border-color:#E9B8B1;} .kpi.alerta .v{color:var(--red);}
+  .panel{background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;padding:16px 18px;margin-bottom:14px;min-width:0;}
+  .panel h3{font-family:'Lora',serif;font-size:17px;font-weight:600;color:var(--navy);margin:0 0 2px;text-wrap:balance;}
+  .panel .nota{font-size:12.5px;color:var(--slate-soft);margin:0 0 10px;line-height:1.5;}
+  .panel .frase{font-size:14px;line-height:1.55;margin:10px 0 0;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .chart{overflow-x:auto;} .chart svg{display:block;width:100%;height:auto;min-width:420px;}
+  .chart text{font-family:'Inter',system-ui,sans-serif;fill:var(--slate);font-size:11px;}
+  .chart .gl{stroke:#E3EAF2;stroke-width:1;} .chart .ax{stroke:#B9C6D6;stroke-width:1;}
+  .stack{display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;margin:6px 0 8px;}
+  .stack span{display:block;min-width:2px;}
+  .leyenda{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;}
+  .leyenda i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px;}
+  .tabla{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums;}
+  .tabla th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate);font-weight:700;padding:6px 8px;border-bottom:1.5px solid var(--celeste-line);}
+  .tabla td{padding:7px 8px;border-bottom:1px solid var(--celeste);}
+  .tabla .barra{display:inline-block;height:8px;border-radius:4px;background:var(--navy);vertical-align:middle;margin-right:8px;}
+  details.lista{margin-top:10px;font-size:13.5px;} details.lista summary{cursor:pointer;font-weight:600;color:var(--navy);}
+  details.lista ul{margin:8px 0 0;padding-left:18px;columns:2;column-gap:24px;} details.lista li{margin-bottom:3px;break-inside:avoid;}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
   .nrow{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--celeste);flex-wrap:wrap;}
   .nrow:last-child{border-bottom:none;}
   .nrow .who{flex:1;min-width:170px;}
@@ -113,7 +138,8 @@
   .frow:last-child{border-bottom:none;}
   .frow .who{flex:1;min-width:0;}
   .frow a{color:var(--navy);font-weight:600;font-size:13px;text-decoration:none;}
-  @media(max-width:640px){.cgrid{grid-template-columns:1fr 1fr;}.cgrid .wide{grid-column:1/-1;}.res{grid-template-columns:1fr auto;}.res .dest{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr 1fr;}.form-grid .wide{grid-column:1/-1;}.tog{min-width:88px;}}
+  @media(max-width:900px){.grid2{grid-template-columns:1fr;}}
+  @media(max-width:640px){details.lista ul{columns:1;}.cgrid{grid-template-columns:1fr 1fr;}.cgrid .wide{grid-column:1/-1;}.res{grid-template-columns:1fr auto;}.res .dest{grid-template-columns:1fr;}.form-grid{grid-template-columns:1fr 1fr;}.form-grid .wide{grid-column:1/-1;}.tog{min-width:88px;}}
 </style>
 </head>
 <body>
@@ -163,7 +189,8 @@
   <main>
     <div id="appMsg" class="msg hidden" style="margin:0 0 14px"></div>
     <div class="tabs">
-      <button class="tab on" data-tab="asistencia" type="button">Asistencia</button>
+      <button class="tab on" data-tab="tablero" type="button">Tablero</button>
+      <button class="tab" data-tab="asistencia" type="button">Asistencia</button>
       <button class="tab" data-tab="alumnos" type="button">Alumnos</button>
       <button class="tab" data-tab="notas" type="button">Notas</button>
       <button class="tab" data-tab="cronograma" type="button">Cronograma</button>
@@ -171,7 +198,42 @@
       <button class="tab" data-tab="archivos" type="button">Archivos</button>
     </div>
 
-    <section id="tab-asistencia">
+    <section id="tab-tablero">
+      <div class="kpis" id="kpis"></div>
+      <div class="panel">
+        <h3>Asistencia por clase</h3>
+        <p class="nota">Porcentaje del curso presente en cada clase dictada. Los parciales no se cuentan. Pasá el mouse por una barra para ver el detalle.</p>
+        <div class="chart" id="chAsis"></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <h3>Cómo viene la asistencia de cada alumno</h3>
+          <p class="nota">Porcentaje acumulado de cada alumno sobre las clases dictadas hasta hoy.</p>
+          <div id="distAsis"></div>
+        </div>
+        <div class="panel">
+          <h3>1er. parcial</h3>
+          <p class="nota">Cantidad de alumnos por nota. Las notas con decimales se agrupan con el entero de abajo.</p>
+          <div class="chart" id="chNotas"></div>
+          <div class="chips" id="chipsSit"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>Asistencia y notas del 1er. parcial</h3>
+        <p class="nota">Asistencia a las clases previas al parcial (1 a 10), según la nota que sacó cada uno.</p>
+        <div class="grid2">
+          <div id="tablaRel"></div>
+          <div class="chart" id="chRel"></div>
+        </div>
+        <p class="frase" id="fraseRel"></p>
+      </div>
+      <div class="panel" id="panelVistas">
+        <h3>Visitas al sitio</h3>
+        <div id="vistas"><p class="nota">Cargando…</p></div>
+      </div>
+    </section>
+
+    <section id="tab-asistencia" class="hidden">
       <div class="tools">
         <select id="claseSel" aria-label="Clase"></select>
         <input type="search" id="buscar" placeholder="Buscar por nombre, registro o DNI">
@@ -376,7 +438,8 @@ function marcarCambio(que){ if(que === 'crono') dirtyCrono = true; else if(que =
 // Cambios de nombre, registro o DNI: si hay notas cargadas hay que volver a cifrarlas, porque la clave sale de esos datos
 function marcarIdentidad(){ marcarCambio(padron.alumnos.some(a => a.notas && Object.keys(a.notas).length) ? 'notas' : undefined); }
 function aviso(texto, tipo){ const m=$('appMsg'); if(!texto){ m.classList.add('hidden'); return; } m.className = 'msg ' + (tipo||'info'); m.textContent = texto; }
-function clasesHastaHoy(){ const h = hoyStr(); return SESIONES.filter(([n,f,ex]) => f <= h && !ex).map(([n]) => n); }
+// La clase de hoy cuenta recién cuando termina (21 h), para no figurar como falta antes de dictarse
+function clasesHastaHoy(){ const h = hoyStr(), fin = new Date().getHours() >= 21; return SESIONES.filter(([n,f,ex]) => (f < h || (f === h && fin)) && !ex).map(([n]) => n); }
 function pctDe(a){
   const tot = clasesHastaHoy(); if(!tot.length) return null;
   return Math.round(a.clases.filter(c => tot.includes(c)).length / tot.length * 100);
@@ -461,6 +524,7 @@ function entrar(){
   $('gate').classList.add('hidden'); $('app').classList.remove('hidden');
   renderAsis(); renderAlu();
   cargarCrono(); cargarCasos(); cargarArchivos();
+  renderTablero(); cargarVistas();
 }
 $('logoutBtn').addEventListener('click', () => {
   if(dirty && !confirm('Hay cambios sin guardar. ¿Salir igual?')) return;
@@ -472,11 +536,13 @@ window.addEventListener('beforeunload', e => { if(dirty){ e.preventDefault(); e.
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
   document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
   $('tab-asistencia').classList.toggle('hidden', t.dataset.tab !== 'asistencia');
+  $('tab-tablero').classList.toggle('hidden', t.dataset.tab !== 'tablero');
   $('tab-alumnos').classList.toggle('hidden', t.dataset.tab !== 'alumnos');
   $('tab-cronograma').classList.toggle('hidden', t.dataset.tab !== 'cronograma');
   $('tab-archivos').classList.toggle('hidden', t.dataset.tab !== 'archivos');
   $('tab-casos').classList.toggle('hidden', t.dataset.tab !== 'casos');
   $('tab-notas').classList.toggle('hidden', t.dataset.tab !== 'notas');
+  if(t.dataset.tab === 'tablero'){ renderTablero(); return; }
   if(t.dataset.tab === 'notas'){ renderNotas(); return; }
   if(t.dataset.tab === 'casos'){ renderCasos(); return; }
   if(t.dataset.tab === 'cronograma'){ renderCrono(); return; }
@@ -812,6 +878,154 @@ async function construirNotas(progreso){
     if(i % 5 === 0) progreso(Math.round(i / lista.length * 100));
   }
   return {v:1, iter:NOTAS_ITER, alumnos:out};
+}
+
+// ---------- TABLERO ----------
+const C_OK = '#2E7D6E', C_WARN = '#B7791F', C_BAD = '#C0392B', C_AUS = '#8B97A8', C_NONE = '#D5DEE8';
+const PARCIAL1 = 11;   // n° de sesión del 1er. parcial: la relación usa las clases anteriores
+function pctSobre(a, clases){ return clases.length ? a.clases.filter(c => clases.includes(c)).length / clases.length * 100 : null; }
+function fmt(n, d = 0){ return n === null || isNaN(n) ? '–' : n.toFixed(d).replace('.', ','); }
+function renderTablero(){
+  if(!padron) return;
+  const A = padron.alumnos, N = A.length, dict = clasesHastaHoy();
+  const pcts = A.map(a => pctSobre(a, dict));
+  const prom = pcts.length ? pcts.reduce((x,y) => x + y, 0) / pcts.length : null;
+  const bajo = A.filter((a,i) => pcts[i] < 75), ult3 = dict.slice(-3);
+  const aband = A.filter(a => ult3.length === 3 && !ult3.some(c => a.clases.includes(c)));
+  const p1 = A.map(a => (a.notas || {}).p1 ?? null), rind = p1.filter(v => typeof v === 'number'), apr = rind.filter(apN).length;
+  const kpi = (l, v, s, alerta) => `<div class="kpi${alerta ? ' alerta' : ''}"><div class="l">${l}</div><div class="v">${v}</div><div class="s">${s}</div></div>`;
+  $('kpis').innerHTML =
+    kpi('Asistencia promedio', fmt(prom) + '%', `${dict.length} clases dictadas, ${N} alumnos`) +
+    kpi('Debajo del 75%', bajo.length, `de ${N} alumnos (${fmt(bajo.length / N * 100)}%)`, bajo.length > 0) +
+    kpi('Aprobaron el 1er. parcial', rind.length ? fmt(apr / rind.length * 100) + '%' : '–', rind.length ? `${apr} de ${rind.length} que rindieron` : 'Sin notas cargadas') +
+    kpi('Sin venir a las últimas 3 clases', aband.length, ult3.length === 3 ? `clases ${ult3.join(', ')}: posible abandono` : 'Hacen falta 3 clases dictadas', aband.length > 0);
+
+  // Asistencia por clase
+  const pres = dict.map(c => A.filter(a => a.clases.includes(c)).length);
+  const W = 760, H = 230, L = 40, R = 10, T = 14, B = 30, bw = (W - L - R) / Math.max(1, dict.length);
+  const y = v => T + (H - T - B) * (1 - v / 100);
+  let g = [0,25,50,75,100].map(v => `<line class="gl" x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${v}%</text>`).join('');
+  const mx = Math.max(...pres), mn = Math.min(...pres);
+  g += dict.map((c,i) => {
+    const pc = N ? pres[i] / N * 100 : 0, x = L + i*bw + bw*0.18, w = bw*0.64, ses = SESIONES.find(s => s[0] === c);
+    const lab = (i === dict.length - 1 || pres[i] === mx || pres[i] === mn) ? `<text x="${x + w/2}" y="${y(pc) - 5}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${pres[i]}</text>` : '';
+    return `<g><title>Clase ${c} · ${fechaCorta(ses[1])}: ${pres[i]} presentes (${fmt(pc)}%)</title><rect x="${x}" y="${y(pc)}" width="${w}" height="${Math.max(0, y(0) - y(pc))}" rx="3" fill="#003575"/>${lab}<text x="${x + w/2}" y="${H - 12}" text-anchor="middle">${c}</text></g>`;
+  }).join('');
+  g += `<line class="ax" x1="${L}" x2="${W-R}" y1="${y(0)}" y2="${y(0)}"/><text x="${(W+L)/2}" y="${H}" text-anchor="middle">N° de clase</text>`;
+  $('chAsis').innerHTML = dict.length ? `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Porcentaje de presentes por clase">${g}</svg>` : '<p class="nota">Todavía no hay clases dictadas.</p>';
+
+  // Distribución de asistencia
+  const g75 = pcts.filter(p => p >= 75).length, g60 = pcts.filter(p => p >= 60 && p < 75).length, gB = pcts.filter(p => p < 60).length;
+  const seg = (n, c) => n ? `<span style="flex:${n};background:${c}" title="${n} alumnos"></span>` : '';
+  const lista = (titulo, arr) => arr.length ? `<details class="lista"><summary>${titulo} (${arr.length})</summary><ul>${arr.map(([a,p]) => `<li>${esc(a.nombre)} · ${fmt(p)}%</li>`).join('')}</ul></details>` : '';
+  const conPct = A.map((a,i) => [a, pcts[i]]).sort((x,y) => x[1] - y[1]);
+  $('distAsis').innerHTML = `<div class="stack">${seg(g75,C_OK)}${seg(g60,C_WARN)}${seg(gB,C_BAD)}</div>
+    <div class="leyenda"><span><i style="background:${C_OK}"></i>75% o más: <b>${g75}</b></span><span><i style="background:${C_WARN}"></i>60 a 74%: <b>${g60}</b></span><span><i style="background:${C_BAD}"></i>Menos de 60%: <b>${gB}</b></span></div>
+    ${lista('Ver los que están debajo del 75%', conPct.filter(([a,p]) => p < 75))}
+    ${lista('Ver los que no vinieron a las últimas 3 clases', aband.map(a => [a, pctSobre(a, dict)]))}`;
+
+  // Histograma del 1er. parcial
+  const cats = ['1','2','3','4','5','6','7','8','9','10','Aus.','s/n'];
+  const cnt = cats.map((c,i) => i < 10 ? rind.filter(v => Math.floor(v) === i + 1).length : i === 10 ? p1.filter(v => v === 'A').length : p1.filter(v => v === null).length);
+  const W2 = 420, H2 = 210, L2 = 28, B2 = 28, T2 = 18, bw2 = (W2 - L2 - 6) / cats.length, m2 = Math.max(1, ...cnt);
+  const y2 = v => T2 + (H2 - T2 - B2) * (1 - v / m2);
+  let h = `<line class="ax" x1="${L2}" x2="${W2-6}" y1="${y2(0)}" y2="${y2(0)}"/>`;
+  h += cats.map((c,i) => {
+    const col = i < 3 ? C_BAD : i < 10 ? C_OK : i === 10 ? C_AUS : C_NONE, x = L2 + i*bw2 + bw2*0.15, w = bw2*0.7;
+    return `<g><title>${i < 10 ? 'Nota ' + c : c === 'Aus.' ? 'Ausentes' : 'Sin nota cargada'}: ${cnt[i]} alumnos</title><rect x="${x}" y="${y2(cnt[i])}" width="${w}" height="${y2(0) - y2(cnt[i])}" rx="3" fill="${col}"/>${cnt[i] ? `<text x="${x + w/2}" y="${y2(cnt[i]) - 4}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${cnt[i]}</text>` : ''}<text x="${x + w/2}" y="${H2 - 10}" text-anchor="middle">${c}</text></g>`;
+  }).join('');
+  $('chNotas').innerHTML = p1.some(v => v !== null) ? `<svg viewBox="0 0 ${W2} ${H2}" role="img" aria-label="Alumnos por nota en el 1er. parcial">${h}</svg>
+    <div class="leyenda" style="margin-top:6px"><span><i style="background:${C_BAD}"></i>Desaprobado</span><span><i style="background:${C_OK}"></i>Aprobado</span><span><i style="background:${C_AUS}"></i>Ausente</span><span><i style="background:${C_NONE}"></i>Sin nota</span></div>` : '<p class="nota">Todavía no hay notas cargadas.</p>';
+  const sit = {}; A.forEach(a => { let st = situacion(a.notas); if(!st) return; if(st === 'En curso'){ const v = a.notas.p1 ?? a.notas.p2; st = 'En curso · ' + (apN(v) ? 'aprobado' : v === 'A' ? 'ausente' : 'desaprobado'); } sit[st] = (sit[st] || 0) + 1; });
+  $('chipsSit').innerHTML = Object.entries(sit).map(([k,v]) => `<span class="pill ${k === 'Promociona' ? 'ok' : /final|recup/.test(k) ? 'warn' : /^En curso/.test(k) ? 'neutral' : 'danger'}">${esc(k)}: ${v}</span>`).join('');
+
+  // Relación asistencia previa al parcial / nota
+  const prev = SESIONES.filter(([n,f,ex]) => n < PARCIAL1 && !ex).map(([n]) => n);
+  const datos = A.map(a => ({a, p:pctSobre(a, prev), n:(a.notas || {}).p1 ?? null}));
+  const grupos = [['Sacaron 2', d => d.n === 2], ['Otros desaprobados (1 y 3)', d => typeof d.n === 'number' && d.n < NOTA_MIN && d.n !== 2], ['Aprobados con 4 a 6', d => typeof d.n === 'number' && d.n >= NOTA_MIN && d.n < 7], ['Aprobados con 7 a 10', d => typeof d.n === 'number' && d.n >= 7], ['Ausentes', d => d.n === 'A'], ['Sin nota cargada', d => d.n === null]]
+    .map(([l,f]) => { const ds = datos.filter(f); return {l, n:ds.length, p:ds.length ? ds.reduce((s,d) => s + d.p, 0) / ds.length : null}; }).filter(x => x.n);
+  $('tablaRel').innerHTML = `<table class="tabla"><thead><tr><th>Grupo</th><th>Alumnos</th><th>Asistencia promedio</th></tr></thead><tbody>${grupos.map(x => `<tr><td>${x.l}</td><td>${x.n}</td><td><span class="barra" style="width:${Math.round((x.p || 0) * 0.9)}px"></span>${fmt(x.p)}%</td></tr>`).join('')}</tbody></table>`;
+  const pts = datos.filter(d => typeof d.n === 'number');
+  const W3 = 420, H3 = 250, L3 = 34, B3 = 34, T3 = 10, R3 = 20;
+  const x3 = v => L3 + (W3 - L3 - R3) * v / 100, y3 = v => T3 + (H3 - T3 - B3) * (1 - (v - 1) / 9);
+  let sc = [1,4,7,10].map(v => `<line class="gl" x1="${L3}" x2="${W3-R3}" y1="${y3(v)}" y2="${y3(v)}"/><text x="${L3-6}" y="${y3(v)+4}" text-anchor="end">${v}</text>`).join('');
+  sc += [0,25,50,75,100].map(v => `<text x="${x3(v)}" y="${H3-18}" text-anchor="middle">${v}%</text>`).join('');
+  sc += `<line class="ax" x1="${L3}" x2="${W3-R3}" y1="${y3(1)}" y2="${y3(1)}"/><line x1="${x3(0)}" x2="${x3(100)}" y1="${y3(NOTA_MIN)}" y2="${y3(NOTA_MIN)}" stroke="${C_BAD}" stroke-dasharray="4 4" stroke-width="1"/><text x="${x3(0)+4}" y="${y3(NOTA_MIN)-5}" text-anchor="start" style="fill:${C_BAD}">aprueba con 4</text>`;
+  sc += pts.map(d => { const j = ((d.a.id * 37) % 13 - 6) / 6; return `<circle cx="${x3(d.p) + j*3}" cy="${y3(d.n) + j*4}" r="5" fill="${apN(d.n) ? '#003575' : C_BAD}" fill-opacity=".7" stroke="#fff" stroke-width="1.5"><title>${esc(d.a.nombre)}: nota ${fmt(d.n,1).replace(',0','')}, asistencia ${fmt(d.p)}%</title></circle>`; }).join('');
+  sc += `<text x="${(W3+L3)/2}" y="${H3-2}" text-anchor="middle">Asistencia a las clases 1 a 10</text><text transform="translate(10 ${(H3-B3)/2}) rotate(-90)" text-anchor="middle">Nota</text>`;
+  $('chRel').innerHTML = pts.length ? `<svg viewBox="0 0 ${W3} ${H3}" role="img" aria-label="Nota del 1er. parcial según asistencia previa">${sc}</svg>` : '';
+  // Correlación
+  let frase = 'Todavía no hay notas cargadas para cruzar con la asistencia.';
+  if(pts.length >= 5){
+    const mxp = pts.reduce((s,d) => s + d.p, 0) / pts.length, myn = pts.reduce((s,d) => s + d.n, 0) / pts.length;
+    const cov = pts.reduce((s,d) => s + (d.p - mxp) * (d.n - myn), 0), vx = pts.reduce((s,d) => s + (d.p - mxp) ** 2, 0), vy = pts.reduce((s,d) => s + (d.n - myn) ** 2, 0);
+    const r = vx && vy ? cov / Math.sqrt(vx * vy) : 0, ar = Math.abs(r);
+    const fuerza = ar < 0.1 ? 'prácticamente no hay relación' : ar < 0.3 ? 'hay una relación débil' : ar < 0.5 ? 'hay una relación moderada' : 'hay una relación fuerte';
+    const dos = grupos.find(x => x.l === 'Sacaron 2'), aps = datos.filter(d => apN(d.n)), pa = aps.length ? aps.reduce((s,d) => s + d.p, 0) / aps.length : null;
+    frase = (dos && pa !== null ? `Los que sacaron 2 vinieron en promedio al <b>${fmt(dos.p)}%</b> de las clases previas al parcial; los que aprobaron, al <b>${fmt(pa)}%</b>. ` : '')
+      + `Entre asistencia y nota ${fuerza} (coeficiente de correlación ${fmt(r, 2)}${ar >= 0.1 ? (r > 0 ? ': a más asistencia, mejor nota' : ': a más asistencia, peor nota') : ''}). Muestra una tendencia del curso, no prueba que una cosa cause la otra.`;
+  }
+  $('fraseRel').innerHTML = frase;
+}
+
+// ---------- VISITAS (GoatCounter: sin cookies ni datos personales) ----------
+const PAGINAS_STATS = [['index.html','stats.js'],['cronograma.html','stats.js'],['casos.html','stats.js'],['bibliografia.html','stats.js'],['asistencia.html','stats.js'],['mi_asistencia.html','stats.js'],['web/viewer.html','../stats.js']];
+let gcCode = '';
+async function cargarVistas(){
+  try{ const f = await leerArchivo('stats.js'); const m = f && f.texto.match(/var CODE = '([a-z0-9-]*)'/); gcCode = m ? m[1] : ''; }catch(e){ gcCode = ''; }
+  renderVistas();
+}
+function renderVistas(){
+  const que = `<p class="nota">Cuenta las visitas a cada página del sitio y cuántas veces se abre cada PDF (apunte, clases, casos y Mintzberg, con la página en que se abrió), además de los clics a videos y formularios. No usa cookies ni guarda datos personales. Cuenta desde que se activa: no hay datos de antes.</p>`;
+  $('vistas').innerHTML = gcCode
+    ? `${que}<div class="tools" style="margin:0"><a class="btn btn-gold" href="https://${gcCode}.goatcounter.com" target="_blank" rel="noopener" style="text-decoration:none">Ver las visitas</a><button class="btn btn-line" id="gcReinst" type="button">Revisar que todas las páginas cuenten</button><span class="hint" style="margin:0">Contador activo: ${esc(gcCode)}.goatcounter.com</span></div>`
+    : `${que}<ol style="font-size:14px;line-height:1.7;margin:0 0 10px;padding-left:20px"><li>Creá una cuenta gratuita en <a href="https://www.goatcounter.com/signup" target="_blank" rel="noopener">goatcounter.com/signup</a>. Te pide elegir un código, por ejemplo <b>sa-saravia</b>.</li><li>Escribí ese código acá y tocá "Activar contador". El admin lo instala solo en todas las páginas.</li></ol>
+       <div class="tools" style="margin:0"><input class="field" id="gcInput" placeholder="Código de GoatCounter" style="max-width:260px"><button class="btn btn-gold" id="gcBtn" type="button">Activar contador</button></div>`;
+  const b = $('gcBtn'); if(b) b.onclick = () => activarVistas($('gcInput').value.trim().toLowerCase().replace(/\.goatcounter\.com.*$/, '').replace(/^https?:\/\//, ''));
+  const r = $('gcReinst'); if(r) r.onclick = () => activarVistas(gcCode);
+}
+async function activarVistas(code){
+  if(!/^[a-z0-9-]{2,40}$/.test(code)){ aviso('El código de GoatCounter tiene solo letras minúsculas, números y guiones (por ejemplo sa-saravia).', 'error'); return; }
+  aviso('Instalando el contador en las páginas…', 'info');
+  try{
+    const js = `// Contador de visitas (GoatCounter, sin cookies ni datos personales). Lo genera el admin del curso.
+(function(){
+  var CODE = '${code}';
+  if(!CODE) return;
+  window.goatcounter = {
+    endpoint: 'https://' + CODE + '.goatcounter.com/count',
+    path: function(p){
+      var f = location.pathname.split('/').pop() || 'index.html';
+      if(f === 'viewer.html'){
+        var m = location.search.match(/file=(?:\\.\\.\\/)?([^&#]+)/), pg = (location.hash.match(/page=(\\d+)/) || [])[1];
+        return '/pdf/' + (m ? decodeURIComponent(m[1]) : 'desconocido') + (pg && pg !== '1' ? ' (pág. ' + pg + ')' : '');
+      }
+      return '/' + f;
+    }
+  };
+  var s = document.createElement('script');
+  s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', window.goatcounter.endpoint);
+  document.head.appendChild(s);
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a[href]') : null;
+    if(!a || !window.goatcounter.count) return;
+    var h = a.getAttribute('href') || '';
+    if(/^https?:/i.test(h) || /\\.(mp4|docx?|pptx?|xlsx?)$/i.test(h)) window.goatcounter.count({path: 'clic: ' + (a.textContent || h).replace(/\\s+/g, ' ').trim().slice(0, 80), title: h, event: true});
+  }, true);
+})();
+`;
+    await escribirArchivo('stats.js', js, 'Admin: contador de visitas');
+    let instaladas = 0;
+    for(const [pag, src] of PAGINAS_STATS){
+      const f = await leerArchivo(pag); if(!f || f.texto.includes('stats.js')) continue;
+      const i = f.texto.lastIndexOf('</body>'), tag = `<script src="${src}" defer><\/script>\n`;
+      const nuevo = i >= 0 ? f.texto.slice(0, i) + tag + f.texto.slice(i) : f.texto + '\n' + tag;
+      await escribirArchivo(pag, nuevo, 'Admin: contador de visitas en ' + pag); instaladas++;
+    }
+    gcCode = code; renderVistas();
+    aviso(`Contador activo. ${instaladas ? `Se agregó a ${instaladas} páginas. ` : 'Todas las páginas ya lo tenían. '}Las visitas empiezan a aparecer en ${code}.goatcounter.com en unos minutos.`, 'ok');
+  }catch(e){ aviso('No se pudo instalar el contador: ' + (e.message || 'error de conexión'), 'error'); }
 }
 
 // ---------- ARCHIVOS ----------

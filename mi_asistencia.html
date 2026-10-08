@@ -162,7 +162,8 @@ function getHoyStr(){
 
 function clasesHastaHoy(){
   const hoy = getHoyStr();
-  return SESIONES.filter(([num, fecha, esExamen]) => fecha <= hoy && !esExamen).map(([num]) => num);
+  const fin = new Date().getHours() >= 21;   // la clase de hoy cuenta recién cuando termina
+  return SESIONES.filter(([num, fecha, esExamen]) => (fecha < hoy || (fecha === hoy && fin)) && !esExamen).map(([num]) => num);
 }
 
 let dataCache = null;
@@ -348,5 +349,6 @@ dniInput.addEventListener('keydown', function(e){
 });
 </script>
 
+<script src="stats.js" defer></script>
 </body>
 </html>
