@@ -383,6 +383,8 @@ submitBtn.addEventListener('click', function(){
     codigoInput.focus();
     return;
   }
+  // Se recuerdan nombre y registro en este celular para no tener que escribirlos cada clase
+  try{ localStorage.setItem('sa-asistencia', JSON.stringify({nombre: nombreInput.value.trim(), registro: dniInput.value.replace(/\D/g,'')})); }catch(e){}
   const nombre = encodeURIComponent(nombreInput.value.trim());
   const dni = encodeURIComponent(dniInput.value.replace(/\D/g,''));
   const url = `${FORM_BASE}&${PARAM_NOMBRE}=${nombre}&${PARAM_DNI}=${dni}`;
@@ -412,8 +414,14 @@ function iniciarVerificacion(){
     return;
   }
 
+  // Datos recordados de la última vez: el alumno solo carga el código
+  try{
+    const g = JSON.parse(localStorage.getItem('sa-asistencia') || 'null');
+    if(g && !nombreInput.value && !dniInput.value){ nombreInput.value = g.nombre || ''; dniInput.value = g.registro || ''; }
+  }catch(e){}
   showForm();
   validarCampos();
+  if(nombreInput.value && dniInput.value){ document.getElementById('okMessage').textContent = 'Tus datos ya están cargados. Solo completá el código que está proyectado en el aula.'; codigoInput.focus(); }
 }
 
 retryBtn.addEventListener('click', iniciarVerificacion);
@@ -421,5 +429,6 @@ retryBtn.addEventListener('click', iniciarVerificacion);
 iniciarVerificacion();
 </script>
 
+<script src="stats.js" defer></script>
 </body>
 </html>
