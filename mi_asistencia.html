@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Asistencia · Sistemas Administrativos · 2C 2026</title>
+<title>Mi situación académica · Sistemas Administrativos · 2C 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,6 +49,19 @@
   }
   button#buscarBtn:hover{ background:var(--gold-deep); }
   .hidden{ display:none !important; }
+  label[for="docInput"]{ margin-top:14px; }
+  .campo-hint{ font-size:12px; color:var(--slate-soft); margin-top:4px; }
+  .seccion{ margin-top:22px; padding-top:18px; border-top:1.5px solid var(--celeste-line); }
+  .seccion h2{ font-family:'Lora',serif; font-size:17px; font-weight:600; color:var(--navy); margin:0 0 12px; }
+  .nota-fila{ display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--celeste); font-size:14.5px; }
+  .nota-fila .v{ font-family:'Lora',serif; font-size:20px; font-weight:600; color:var(--navy); }
+  .nota-fila .v.mal{ color:var(--red); }
+  .sit-box{ margin-top:14px; padding:14px 16px; border-radius:12px; font-size:13.5px; line-height:1.5; }
+  .sit-box strong{ display:block; font-size:15px; margin-bottom:3px; }
+  .sit-box.ok{ background:var(--teal-bg); color:var(--teal); }
+  .sit-box.warn{ background:#FCF3DC; color:var(--amber); }
+  .sit-box.danger{ background:var(--red-bg); color:var(--red); }
+  .sit-box.neutral{ background:var(--celeste); color:var(--navy); }
   .resultado{ margin-top:22px; }
   .pct-circle{
     width:130px; height:130px; border-radius:50%; margin:0 auto 16px;
@@ -82,13 +95,16 @@
   <div class="card-top">
     <a href="index.html" class="backlink">← Inicio</a>
     <p class="eyebrow">Cátedra Saravia · Sistemas Administrativos</p>
-    <h1>Mi asistencia</h1>
-    <p>Consultá tu porcentaje de asistencia acumulado</p>
+    <h1>Mi situación académica</h1>
+    <p>Consultá tu asistencia, tus notas y tu situación en la materia</p>
   </div>
 
   <div class="body-content">
     <label for="dniInput">N° de Registro</label>
     <input type="tel" id="dniInput" placeholder="Ej: 916915" inputmode="numeric" autocomplete="off">
+    <label for="docInput">DNI</label>
+    <input type="tel" id="docInput" placeholder="Ej: 40123456" inputmode="numeric" autocomplete="off">
+    <div class="campo-hint">Con el registro ves tu asistencia. Para ver tus notas hacen falta los dos datos.</div>
     <button id="buscarBtn" type="button">Consultar</button>
 
     <div id="loadingMsg" class="loader hidden">Buscando…</div>
@@ -108,6 +124,11 @@
         Asististe a <strong id="asistidasCount">0</strong> de <strong id="totalCount">0</strong> clases dictadas hasta la fecha.
         <div id="faltantesWrap" style="margin-top:8px;"></div>
       </div>
+    </div>
+
+    <div id="notasBox" class="seccion hidden">
+      <h2>Notas y situación</h2>
+      <div id="notasContenido"></div>
     </div>
   </div>
 </div>
@@ -153,6 +174,7 @@ async function cargarDatos(){
 }
 
 const dniInput = document.getElementById('dniInput');
+const docInput = document.getElementById('docInput');
 const buscarBtn = document.getElementById('buscarBtn');
 const loadingMsg = document.getElementById('loadingMsg');
 const errorBox = document.getElementById('errorBox');
@@ -164,12 +186,92 @@ const statusMsg = document.getElementById('statusMsg');
 const asistidasCount = document.getElementById('asistidasCount');
 const totalCount = document.getElementById('totalCount');
 const faltantesWrap = document.getElementById('faltantesWrap');
+const notasBox = document.getElementById('notasBox');
+const notasContenido = document.getElementById('notasContenido');
+
+// ---------- NOTAS ----------
+// Reglas de la cátedra: se aprueba con 4; promociona con los dos parciales aprobados y suma 13 o más;
+// se puede recuperar un solo parcial; ausente + aprobado que no se presenta al recuperatorio queda Ausente;
+// con los dos aprobados sin llegar a 13 se puede recuperar el de menor nota para levantar la suma.
+const NOTA_MIN = 4, SUMA_PROMO = 13;
+function apN(x){ return typeof x === 'number' && x >= NOTA_MIN; }
+function situacion(n){
+  const p1 = n.p1 ?? null, p2 = n.p2 ?? null, rec = n.rec ?? null;
+  if(p1 === null && p2 === null) return null;
+  if(p1 === null || p2 === null) return 'En curso';
+  const a1 = apN(p1), a2 = apN(p2);
+  if(a1 && a2){
+    // Los dos aprobados sin llegar a la suma: puede recuperar el de menor nota para levantar (solo cuenta si mejora)
+    const menor = Math.min(p1, p2), mayor = Math.max(p1, p2), mejor = (typeof rec === 'number' && rec > menor) ? rec : menor;
+    return mayor + mejor >= SUMA_PROMO ? 'Promociona' : 'A final';
+  }
+  if(!a1 && !a2) return (p1 === 'A' && p2 === 'A') ? 'Ausente' : 'Insuficiente';
+  const malo = a1 ? p2 : p1, bueno = a1 ? p1 : p2;
+  if(rec === null) return 'A recuperatorio';
+  if(rec === 'A') return malo === 'A' ? 'Ausente' : 'Insuficiente';
+  if(apN(rec)) return bueno + rec >= SUMA_PROMO ? 'Promociona' : 'A final';
+  return 'Insuficiente';
+}
+function unb64(str){ const s = atob(str); const out = new Uint8Array(s.length); for(let i=0;i<s.length;i++) out[i] = s.charCodeAt(i); return out; }
+let notasCache;
+async function cargarNotas(){
+  if(notasCache !== undefined) return notasCache;
+  try{ const r = await fetch('notas_data.json?v=' + Date.now()); notasCache = r.ok ? await r.json() : null; }
+  catch(e){ notasCache = null; }
+  return notasCache;
+}
+// Devuelve las notas del alumno, null si no hay con esos datos, o undefined si todavía no se publicaron notas
+async function buscarNotas(registro, dni){
+  const datos = await cargarNotas(); if(!datos || !datos.alumnos) return undefined;
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(registro + '|' + dni), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:new TextEncoder().encode(SALT + '|notas'), iterations:datos.iter || 200000, hash:'SHA-256'}, base, 512));
+  const id = Array.from(bits.subarray(0,32)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const e = datos.alumnos[id]; if(!e) return null;
+  const key = await crypto.subtle.importKey('raw', bits.subarray(32), 'AES-GCM', false, ['decrypt']);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(e.iv)}, key, unb64(e.ct))));
+}
+function textoNota(v){ return v === 'A' ? 'Ausente' : String(v).replace('.', ','); }
+function explicacion(n, st){
+  const p1 = n.p1 ?? null, p2 = n.p2 ?? null;
+  if(st === 'En curso'){
+    const v = p1 !== null ? p1 : p2, cual = p1 !== null ? '1er.' : '2do.', otro = p1 !== null ? '2do.' : '1er.', del = p1 !== null ? '1ro.' : '2do.';
+    if(apN(v)){
+      const falta = Math.max(NOTA_MIN, SUMA_PROMO - v);
+      return ['neutral', `${cual} parcial aprobado`, `Para promocionar necesitás ${falta} o más en el ${otro} parcial (los dos aprobados y que la suma dé ${SUMA_PROMO} o más). Si aprobás con menos, podés rendir el recuperatorio del parcial de menor nota para levantar la suma; si no llegás, vas a final.`];
+    }
+    if(v === 'A') return ['warn', `Ausente en el ${cual} parcial`, `Tenés que aprobar el ${otro} parcial y rendir el recuperatorio del ${del}`];
+    return ['warn', `${cual} parcial desaprobado`, `Tenés que aprobar el ${otro} parcial y rendir el recuperatorio del ${del} Se puede recuperar un solo parcial.`];
+  }
+  if(st === 'Promociona') return ['ok', 'Promocionás la materia', `Tenés los dos parciales aprobados y la suma da ${SUMA_PROMO} o más.`];
+  if(st === 'A final'){
+    if((n.rec ?? null) === null){
+      const falta = Math.max(NOTA_MIN, SUMA_PROMO - Math.max(p1, p2));
+      return ['warn', 'Por ahora vas a final', `Tenés los dos parciales aprobados, pero la suma no llega a ${SUMA_PROMO}. Podés rendir el recuperatorio del parcial de menor nota para levantarla: con ${falta} o más, promocionás.`];
+    }
+    return ['warn', 'Vas a final', `Tenés los dos parciales aprobados, pero la suma no llega a ${SUMA_PROMO}.`];
+  }
+  if(st === 'A recuperatorio'){
+    const cual = apN(p1) ? '2do.' : '1er.', del = apN(p1) ? '2do.' : '1ro.', v = apN(p1) ? p2 : p1;
+    return ['warn', 'Vas a recuperatorio', v === 'A' ? `Estuviste ausente en el ${cual} parcial y aprobaste el otro: tenés que rendir el recuperatorio del ${del}` : `Desaprobaste el ${cual} parcial y aprobaste el otro: tenés que rendir el recuperatorio del ${del}`];
+  }
+  if(st === 'Ausente') return ['danger', 'Ausente', 'Figurás como ausente en la materia por no haberte presentado a rendir.'];
+  return ['danger', 'Insuficiente', 'No se alcanzaron las condiciones de aprobación de la cursada.'];
+}
+function mostrarNotas(n){
+  const filas = [['1er. Parcial', n.p1], ['2do. Parcial', n.p2], ['Recuperatorio', n.rec], ['Final', n.final]].filter(f => (f[1] ?? null) !== null);
+  if(!filas.length){ notasContenido.innerHTML = '<div class="sit-box neutral">Todavía no tenés notas cargadas.</div>'; return; }
+  const st = situacion(n); const [cls, tit, txt] = st ? explicacion(n, st) : ['neutral', '', ''];
+  notasContenido.innerHTML = filas.map(([l,v]) => `<div class="nota-fila"><span>${l}</span><span class="v ${apN(v) ? '' : 'mal'}">${textoNota(v)}</span></div>`).join('')
+    + (st ? `<div class="sit-box ${cls}"><strong>${tit}</strong>${txt}</div>` : '');
+}
 
 buscarBtn.addEventListener('click', async function(){
   errorBox.classList.add('hidden');
   resultado.classList.add('hidden');
-  const dni = dniInput.value.replace(/\D/g,'').trim();
-  if(dni.length < 5){
+  notasBox.classList.add('hidden');
+  const reg = dniInput.value.replace(/\D/g,'').trim();
+  const doc = docInput.value.replace(/\D/g,'').trim();
+  if(reg.length < 5 && doc.length < 5){
     errorText.textContent = 'Ingresá tu N° de Registro (o DNI si no lo recordás).';
     errorBox.classList.remove('hidden');
     return;
@@ -178,17 +280,25 @@ buscarBtn.addEventListener('click', async function(){
   buscarBtn.disabled = true;
   try{
     const data = await cargarDatos();
-    const hash = await sha256hex(dni + SALT);
-    const entry = data[hash];
+    let entry = reg.length >= 5 ? data[await sha256hex(reg + SALT)] : null;
+    if(!entry && doc.length >= 5) entry = data[await sha256hex(doc + SALT)];
+
+    // Notas: solo con los dos datos
+    let notas, avisoNotas = '';
+    if(reg.length >= 5 && doc.length >= 5){
+      try{ notas = await buscarNotas(reg, doc); }catch(e){ notas = null; }
+      if(notas === null) avisoNotas = 'No encontramos notas con ese registro y DNI juntos. Revisá que los dos estén bien escritos.';
+    }
     loadingMsg.classList.add('hidden');
     buscarBtn.disabled = false;
 
-    if(!entry){
+    if(!entry && !notas){
       errorText.textContent = 'No encontramos ese Registro (o DNI) en el padrón. Verificá que esté bien escrito, o consultá con la cátedra.';
       errorBox.classList.remove('hidden');
       return;
     }
 
+    if(entry){
     const totalClases = clasesHastaHoy();
     const asistidas = entry.clases_asistidas.filter(c => totalClases.includes(c));
     const pct = totalClases.length > 0 ? Math.round((asistidas.length / totalClases.length) * 100) : 0;
@@ -218,6 +328,12 @@ buscarBtn.addEventListener('click', async function(){
     }
 
     resultado.classList.remove('hidden');
+    }
+
+    if(notas){ mostrarNotas(notas); notasBox.classList.remove('hidden'); }
+    else if(avisoNotas){ notasContenido.innerHTML = `<div class="sit-box neutral">${avisoNotas}</div>`; notasBox.classList.remove('hidden'); }
+    else if(notas === undefined && reg.length >= 5 && doc.length >= 5){ /* todavía no hay notas publicadas: no se muestra nada */ }
+    else if(await cargarNotas()){ notasContenido.innerHTML = '<div class="sit-box neutral">Para ver tus notas, completá también el otro dato (registro y DNI) y volvé a consultar.</div>'; notasBox.classList.remove('hidden'); }
   } catch(e){
     loadingMsg.classList.add('hidden');
     buscarBtn.disabled = false;
@@ -226,6 +342,7 @@ buscarBtn.addEventListener('click', async function(){
   }
 });
 
+docInput.addEventListener('keydown', function(e){ if(e.key === 'Enter') buscarBtn.click(); });
 dniInput.addEventListener('keydown', function(e){
   if(e.key === 'Enter') buscarBtn.click();
 });

@@ -83,6 +83,15 @@
   .empty{padding:24px;text-align:center;color:var(--slate-soft);}
   .form-grid{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;align-items:end;background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;padding:14px;margin-bottom:12px;}
   .form-grid label{margin-top:0;}
+  .nrow{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--celeste);flex-wrap:wrap;}
+  .nrow:last-child{border-bottom:none;}
+  .nrow .who{flex:1;min-width:170px;}
+  .nrow .nin{display:flex;gap:6px;}
+  .nrow .nin label{margin:0;font-size:10px;text-align:center;letter-spacing:0;}
+  .nrow .nin input{width:54px;padding:8px 4px;text-align:center;border-radius:8px;border:1.5px solid var(--celeste-line);background:var(--paper);font-weight:600;}
+  .nrow .nin input.mal{color:var(--red);}
+  .nrow .sit{min-width:124px;text-align:right;}
+  .pill.neutral{background:var(--celeste);color:var(--navy);}
   .citem{background:#fff;border:1.5px solid var(--celeste-line);border-radius:12px;margin-bottom:8px;overflow:hidden;}
   .citem.open{border-color:var(--navy);}
   .chead{display:flex;align-items:center;gap:10px;padding:10px 14px;}
@@ -156,6 +165,7 @@
     <div class="tabs">
       <button class="tab on" data-tab="asistencia" type="button">Asistencia</button>
       <button class="tab" data-tab="alumnos" type="button">Alumnos</button>
+      <button class="tab" data-tab="notas" type="button">Notas</button>
       <button class="tab" data-tab="cronograma" type="button">Cronograma</button>
       <button class="tab" data-tab="casos" type="button">Casos</button>
       <button class="tab" data-tab="archivos" type="button">Archivos</button>
@@ -186,6 +196,21 @@
       </div>
       <div class="tools"><input type="search" id="buscar2" placeholder="Buscar por nombre, registro o DNI"><button class="btn btn-line" id="listadoBtn" type="button">Importar listado (CSV)</button><input type="file" id="listadoInput" accept=".csv,.txt" class="hidden"><span class="hint" id="totAlumnos" style="margin:0"></span></div>
       <div class="list" id="listaAlu"></div>
+    </section>
+
+    <section id="tab-notas" class="hidden">
+      <div class="tools">
+        <input type="search" id="buscar3" placeholder="Buscar por nombre, registro o DNI">
+        <button class="btn btn-line" id="notasImpBtn" type="button">Importar planilla de notas</button>
+        <input type="file" id="notasImpInput" accept=".xlsx,.xls,.csv" class="hidden">
+      </div>
+      <div class="tools">
+        <select id="vaciosSel" aria-label="Instancia"><option value="p1">1er. Parcial</option><option value="p2">2do. Parcial</option><option value="rec">Recuperatorio</option><option value="final">Final</option></select>
+        <button class="btn btn-line" id="vaciosBtn" type="button">Marcar los vacíos como ausente</button>
+        <span class="hint" style="margin:0">Nota de 1 a 10, o A para ausente. Cada alumno ve solo la suya, con registro y DNI.</span>
+      </div>
+      <div class="counter" style="display:block;font-size:13.5px;line-height:1.7" id="notasResumen"></div>
+      <div class="list" id="listaNotas"></div>
     </section>
 
     <section id="tab-cronograma" class="hidden">
@@ -221,6 +246,8 @@ const OWNER = "caraballosofi-stack";
 const REPO = "Cronograma-Sistemas-Administrativos-2C2026";
 const BRANCH = "main";
 const ARCH_PADRON = "padron.enc.json";        // padrón cifrado (nombres, registro, DNI)
+const ARCH_NOTAS = "notas_data.json";         // notas cifradas por alumno (las lee mi_asistencia.html)
+const NOTA_MIN = 4, SUMA_PROMO = 13;          // reglas de la cátedra
 const ARCH_CASOS = "casos_data.json";         // lo que lee casos.html
 const ARCH_CRONO = "cronograma_data.json";    // lo que lee cronograma.html
 const ARCH_PUBLICO = "asistencia_data.json";  // lo que lee Mi Asistencia (solo hashes)
@@ -340,12 +367,14 @@ let dirty = false;        // hay algo sin guardar
 let dirtyAsis = false, dirtyCrono = false;
 let crono = null;         // {items:[...]} — lo que muestra cronograma.html
 let archivos = [];        // archivos publicados en el sitio [{name,size}]
-let dirtyCasos = false;
+let dirtyCasos = false, dirtyNotas = false;
 let casos = null;         // [{titulo, archivo, form}] — lo que muestra casos.html
 let abierto = -1;         // índice de la fecha que se está editando
 let claseSel = 1;
 
-function marcarCambio(que){ if(que === 'crono') dirtyCrono = true; else if(que === 'casos') dirtyCasos = true; else dirtyAsis = true; dirty = true; $('saveBtn').disabled = false; $('saveState').textContent = 'Cambios sin guardar'; $('saveState').classList.add('dirty'); }
+function marcarCambio(que){ if(que === 'crono') dirtyCrono = true; else if(que === 'casos') dirtyCasos = true; else { dirtyAsis = true; if(que === 'notas') dirtyNotas = true; } dirty = true; $('saveBtn').disabled = false; $('saveState').textContent = 'Cambios sin guardar'; $('saveState').classList.add('dirty'); }
+// Cambios de nombre, registro o DNI: si hay notas cargadas hay que volver a cifrarlas, porque la clave sale de esos datos
+function marcarIdentidad(){ marcarCambio(padron.alumnos.some(a => a.notas && Object.keys(a.notas).length) ? 'notas' : undefined); }
 function aviso(texto, tipo){ const m=$('appMsg'); if(!texto){ m.classList.add('hidden'); return; } m.className = 'msg ' + (tipo||'info'); m.textContent = texto; }
 function clasesHastaHoy(){ const h = hoyStr(); return SESIONES.filter(([n,f,ex]) => f <= h && !ex).map(([n]) => n); }
 function pctDe(a){
@@ -447,6 +476,8 @@ document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () =>
   $('tab-cronograma').classList.toggle('hidden', t.dataset.tab !== 'cronograma');
   $('tab-archivos').classList.toggle('hidden', t.dataset.tab !== 'archivos');
   $('tab-casos').classList.toggle('hidden', t.dataset.tab !== 'casos');
+  $('tab-notas').classList.toggle('hidden', t.dataset.tab !== 'notas');
+  if(t.dataset.tab === 'notas'){ renderNotas(); return; }
   if(t.dataset.tab === 'casos'){ renderCasos(); return; }
   if(t.dataset.tab === 'cronograma'){ renderCrono(); return; }
   if(t.dataset.tab === 'archivos'){ renderArch(); return; }
@@ -580,7 +611,7 @@ $('addBtn').addEventListener('click', async () => {
   await absorberLegado(a);
   padron.alumnos.push(a); ordenar();
   $('nNombre').value = $('nReg').value = $('nDni').value = '';
-  marcarCambio(); renderAlu();
+  marcarIdentidad(); renderAlu();
   aviso(`${nombre} agregado` + (a.clases.length ? `, con ${a.clases.length} clases que ya tenía registradas.` : '.'), 'ok');
 });
 $('listaAlu').addEventListener('click', async e => {
@@ -588,7 +619,7 @@ $('listaAlu').addEventListener('click', async e => {
   const a = padron.alumnos.find(x => x.id === Number(row.dataset.id));
   if(e.target.classList.contains('del')){
     if(!confirm(`¿Quitar a ${a.nombre} del padrón? Se pierde su asistencia cargada.`)) return;
-    padron.alumnos = padron.alumnos.filter(x => x !== a); marcarCambio(); renderAlu();
+    padron.alumnos = padron.alumnos.filter(x => x !== a); marcarIdentidad(); renderAlu();
   }
   if(e.target.classList.contains('ed')){
     const nombre = prompt('Nombre y apellido', a.nombre); if(nombre === null) return;
@@ -600,7 +631,7 @@ $('listaAlu').addEventListener('click', async e => {
     if(dup){ aviso(`Ya hay otro alumno con ese registro o DNI: ${dup.nombre}.`, 'error'); return; }
     if(nombre.trim() !== a.nombre) delete a.sinNombre;
     a.nombre = nombre.trim(); a.registro = r; a.dni = d;
-    await absorberLegado(a); ordenar(); marcarCambio(); renderAlu(); aviso('');
+    await absorberLegado(a); ordenar(); marcarIdentidad(); renderAlu(); aviso('');
   }
 });
 
@@ -630,10 +661,158 @@ $('listadoInput').addEventListener('change', async e => {
       if(dni) a.dni = dni;
       await absorberLegado(a);
     }
-    ordenar(); marcarCambio(); renderAlu(); renderAsis();
+    ordenar(); marcarIdentidad(); renderAlu(); renderAsis();
     aviso(`Listado importado: ${completados} alumnos completados con nombre, registro y DNI, ${agregados} agregados. La asistencia cargada no se modificó.`, 'ok');
   }catch(err){ aviso(err.message || 'No se pudo leer el listado.', 'error'); }
 });
+
+// ---------- NOTAS ----------
+const INST = [['p1','1er. P.'],['p2','2do. P.'],['rec','Recup.'],['final','Final']];
+const INST_LARGO = {p1:'1er. Parcial', p2:'2do. Parcial', rec:'Recuperatorio', final:'Final'};
+function apN(x){ return typeof x === 'number' && x >= NOTA_MIN; }
+// Reglas: se aprueba con 4; promociona con los dos aprobados y suma 13 o más; se recupera un solo parcial.
+// Ausente + aprobado que no se presenta al recuperatorio queda Ausente.
+// Los dos aprobados sin llegar a 13: puede recuperar el parcial de menor nota para levantar la suma.
+function situacion(n){
+  n = n || {}; const p1 = n.p1 ?? null, p2 = n.p2 ?? null, rec = n.rec ?? null;
+  if(p1 === null && p2 === null) return null;
+  if(p1 === null || p2 === null) return 'En curso';
+  const a1 = apN(p1), a2 = apN(p2);
+  if(a1 && a2){
+    // Los dos aprobados sin llegar a la suma: puede recuperar el de menor nota para levantar (solo cuenta si mejora)
+    const menor = Math.min(p1, p2), mayor = Math.max(p1, p2), mejor = (typeof rec === 'number' && rec > menor) ? rec : menor;
+    return mayor + mejor >= SUMA_PROMO ? 'Promociona' : 'A final';
+  }
+  if(!a1 && !a2) return (p1 === 'A' && p2 === 'A') ? 'Ausente' : 'Insuficiente';
+  const malo = a1 ? p2 : p1, bueno = a1 ? p1 : p2;
+  if(rec === null) return 'A recuperatorio';
+  if(rec === 'A') return malo === 'A' ? 'Ausente' : 'Insuficiente';
+  if(apN(rec)) return bueno + rec >= SUMA_PROMO ? 'Promociona' : 'A final';
+  return 'Insuficiente';
+}
+function pillSit(a){
+  const st = situacion(a.notas); if(!st) return '<span class="sub">Sin notas</span>';
+  const cls = st === 'Promociona' ? 'ok' : (st === 'A final' || st === 'A recuperatorio') ? 'warn' : st === 'En curso' ? 'neutral' : 'danger';
+  let txt = st;
+  if(st === 'En curso'){   // se aclara cómo viene: un ausente no es un desaprobado
+    const n = a.notas, v = (n.p1 ?? null) !== null ? n.p1 : n.p2, cual = (n.p1 ?? null) !== null ? '1ro.' : '2do.';
+    txt = `${cual} ${apN(v) ? 'aprobado' : v === 'A' ? 'ausente' : 'desaprobado'}`;
+  }
+  return `<span class="pill ${cls}">${txt}</span>`;
+}
+function leerNota(v){
+  if(v === null || v === undefined) return null;
+  if(typeof v === 'number') return (v >= 1 && v <= 10) ? v : undefined;
+  const t = String(v).trim(); if(t === '') return null;
+  if(/^a(usente)?$/i.test(t)) return 'A';
+  const x = Number(t.replace(',', '.')); return (isFinite(x) && x >= 1 && x <= 10) ? x : undefined;
+}
+function renderResumenNotas(){
+  const lineas = INST.map(([k]) => {
+    const vs = padron.alumnos.map(a => (a.notas || {})[k] ?? null), con = vs.filter(v => v !== null);
+    if(!con.length) return null;
+    const nums = con.filter(v => typeof v === 'number'), ap = nums.filter(apN).length;
+    return `<b style="color:var(--gold)">${INST_LARGO[k]}</b> · ${con.length} cargadas · ${ap} aprobados · ${nums.length - ap} desaprobados · ${con.length - nums.length} ausentes · ${vs.length - con.length} sin cargar`;
+  }).filter(Boolean);
+  const sit = {}; padron.alumnos.forEach(a => { const st = situacion(a.notas); if(st) sit[st] = (sit[st] || 0) + 1; });
+  const orden = ['Promociona','A final','A recuperatorio','Insuficiente','Ausente','En curso'].filter(k => sit[k]).map(k => `${sit[k]} ${k.toLowerCase()}`);
+  $('notasResumen').innerHTML = lineas.length ? lineas.join('<br>') + (orden.length ? `<br><b style="color:var(--gold)">Situación</b> · ${orden.join(' · ')}` : '') : 'Todavía no hay notas cargadas.';
+}
+function renderNotas(){
+  renderResumenNotas();
+  const q = norm($('buscar3').value.trim());
+  const filas = padron.alumnos.filter(a => coincide(a,q));
+  $('listaNotas').innerHTML = filas.length ? filas.map(a => {
+    const n = a.notas || {};
+    return `<div class="nrow" data-id="${a.id}"><div class="who"><div class="name">${esc(a.nombre)}</div><div class="sub">${a.registro?'Reg. '+esc(a.registro):'Sin registro'}${a.dni?' · DNI '+esc(a.dni):' · Sin DNI'}</div></div>
+      <div class="nin">${INST.map(([k,l]) => { const v = n[k] ?? ''; return `<div><label>${l}</label><input data-k="${k}" value="${esc(v)}" inputmode="decimal" autocomplete="off" aria-label="${INST_LARGO[k]} de ${esc(a.nombre)}" class="${v !== '' && !apN(v) ? 'mal' : ''}"></div>`; }).join('')}</div>
+      <div class="sit">${pillSit(a)}</div></div>`;
+  }).join('') : '<div class="empty">No hay alumnos para mostrar.</div>';
+}
+$('buscar3').addEventListener('input', renderNotas);
+$('listaNotas').addEventListener('change', e => {
+  const k = e.target.dataset.k; if(!k) return;
+  const row = e.target.closest('.nrow'), a = padron.alumnos.find(x => x.id === Number(row.dataset.id));
+  const v = leerNota(e.target.value);
+  if(v === undefined){ aviso('Nota no válida: ingresá un número de 1 a 10, o A si estuvo ausente.', 'error'); e.target.value = (a.notas || {})[k] ?? ''; return; }
+  a.notas = a.notas || {}; if(v === null) delete a.notas[k]; else a.notas[k] = v;
+  e.target.value = v ?? ''; e.target.classList.toggle('mal', v !== null && !apN(v));
+  row.querySelector('.sit').innerHTML = pillSit(a); renderResumenNotas(); aviso(''); marcarCambio('notas');
+});
+$('vaciosBtn').addEventListener('click', () => {
+  const k = $('vaciosSel').value; const vacios = padron.alumnos.filter(a => ((a.notas || {})[k] ?? null) === null);
+  if(!vacios.length){ aviso(`No hay alumnos sin nota en ${INST_LARGO[k]}.`, 'info'); return; }
+  if(!confirm(`¿Marcar como ausentes a los ${vacios.length} alumnos sin nota en ${INST_LARGO[k]}?`)) return;
+  vacios.forEach(a => { a.notas = a.notas || {}; a.notas[k] = 'A'; });
+  marcarCambio('notas'); renderNotas(); aviso(`${vacios.length} alumnos marcados como ausentes en ${INST_LARGO[k]}.`, 'ok');
+});
+$('notasImpBtn').addEventListener('click', () => $('notasImpInput').click());
+$('notasImpInput').addEventListener('change', async e => {
+  const f = e.target.files[0]; e.target.value = ''; if(!f) return;
+  try{
+    if(typeof XLSX === 'undefined') throw new Error('No se pudo cargar el lector de Excel. Revisá la conexión y recargá la página.');
+    const wb = XLSX.read(await f.arrayBuffer(), {type:'array'});
+    const hoja = wb.SheetNames.find(x => norm(x) === 'notas') || wb.SheetNames[0];
+    const filas = XLSX.utils.sheet_to_json(wb.Sheets[hoja], {raw:true, defval:''});
+    if(!filas.length) throw new Error('La planilla está vacía.');
+    const cols = Object.keys(filas[0]); const col = fn => cols.find(c => fn(norm(c).trim()));
+    const cReg = col(c => c.includes('registro')), cDni = col(c => c.includes('documento') || c === 'dni');
+    const cN = {p1: col(c => c.startsWith('1er') && c.includes('parcial')), p2: col(c => c.startsWith('2do') && c.includes('parcial')), rec: col(c => c.startsWith('recuperatorio')), final: col(c => c === 'final')};
+    if(!cReg && !cDni) throw new Error('No encuentro la columna "Registro" ni "Documento" en la planilla.');
+    if(!cN.p1 && !cN.p2 && !cN.rec && !cN.final) throw new Error('No encuentro columnas de notas (1er. Parcial, 2do. Parcial, Recuperatorio, Final).');
+    // Casilleros de la hoja Reglas: "celdas vacías = ausente" por instancia
+    const vacioAusente = {};
+    const hojaReglas = wb.SheetNames.find(x => norm(x) === 'reglas');
+    if(hojaReglas){
+      const rr = XLSX.utils.sheet_to_json(wb.Sheets[hojaReglas], {header:1, defval:''});
+      const i0 = rr.findIndex(r => r.some(c => norm(c).includes('celdas vacias')));
+      if(i0 >= 0) for(const r of rr.slice(i0+1, i0+7)){
+        const celdas = r.map(c => norm(c).trim()).filter(c => c);
+        const k = celdas[0] === '1er. parcial' ? 'p1' : celdas[0] === '2do. parcial' ? 'p2' : celdas[0] === 'recuperatorio' ? 'rec' : celdas[0] === 'final' ? 'final' : null;
+        if(k && celdas[1] === 'si') vacioAusente[k] = true;
+      }
+    }
+    let cargadas = 0, invalidas = [], desconocidos = [], porVacio = 0;
+    for(const r of filas){
+      const reg = cReg ? soloDig(r[cReg]) : '', dni = cDni ? soloDig(r[cDni]) : '';
+      if(!reg && !dni) continue;
+      const a = padron.alumnos.find(y => (reg && y.registro === reg) || (dni && y.dni === dni));
+      if(!a){ if(Object.values(cN).some(c => c && String(r[c]).trim() !== '')) desconocidos.push(reg || dni); continue; }
+      for(const [k,c] of Object.entries(cN)){
+        if(!c) continue; const v = leerNota(r[c]);
+        if(v === undefined){ invalidas.push(`${a.nombre} (${INST_LARGO[k]}: ${r[c]})`); continue; }
+        if(v === null){                                // una celda vacía no borra lo ya cargado…
+          if(vacioAusente[k] && ((a.notas || {})[k] ?? null) === null){ a.notas = a.notas || {}; a.notas[k] = 'A'; cargadas++; porVacio++; }   // …salvo que el casillero diga que cuenta como ausente
+          continue;
+        }
+        a.notas = a.notas || {}; if(a.notas[k] !== v){ a.notas[k] = v; cargadas++; }
+      }
+    }
+    if(cargadas) marcarCambio('notas');
+    renderNotas();
+    aviso(`Planilla importada: ${cargadas} notas cargadas o actualizadas` + (porVacio ? `, de las cuales ${porVacio} son vacíos tomados como ausente por el casillero de la planilla.` : '.') + (invalidas.length ? ` No se cargaron ${invalidas.length} valores no válidos: ${invalidas.slice(0,5).join('; ')}.` : '') + (desconocidos.length ? ` ${desconocidos.length} filas no coinciden con ningún alumno del padrón (${desconocidos.slice(0,5).join(', ')}).` : '') + ' Las celdas vacías no borran lo ya cargado.', (invalidas.length || desconocidos.length) ? 'info' : 'ok');
+  }catch(err){ aviso(err.message || 'No se pudo leer la planilla.', 'error'); }
+});
+// Cada alumno queda cifrado con una clave que sale de su registro + DNI: sin los dos datos no se puede leer.
+const NOTAS_ITER = 200000;
+async function claveNotas(registro, dni){
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(registro + '|' + dni), 'PBKDF2', false, ['deriveBits']);
+  const bits = new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:new TextEncoder().encode(SALT + '|notas'), iterations:NOTAS_ITER, hash:'SHA-256'}, base, 512));
+  const id = Array.from(bits.subarray(0,32)).map(b => b.toString(16).padStart(2,'0')).join('');
+  const key = await crypto.subtle.importKey('raw', bits.subarray(32), 'AES-GCM', false, ['encrypt']);
+  return {id, key};
+}
+async function construirNotas(progreso){
+  const out = {}; const lista = padron.alumnos.filter(a => a.registro && a.dni);
+  for(let i = 0; i < lista.length; i++){
+    const a = lista[i], {id, key} = await claveNotas(a.registro, a.dni), iv = crypto.getRandomValues(new Uint8Array(12));
+    const n = a.notas || {}; const claro = {p1:n.p1 ?? null, p2:n.p2 ?? null, rec:n.rec ?? null, final:n.final ?? null};
+    const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, new TextEncoder().encode(JSON.stringify(claro))));
+    out[id] = {iv:b64(iv), ct:b64(ct)};
+    if(i % 5 === 0) progreso(Math.round(i / lista.length * 100));
+  }
+  return {v:1, iter:NOTAS_ITER, alumnos:out};
+}
 
 // ---------- ARCHIVOS ----------
 const EXT_OK = /\.(pdf|mp4|png|jpe?g|gif|webp|docx?|pptx?|xlsx?|zip)$/i;
@@ -913,7 +1092,12 @@ $('saveBtn').addEventListener('click', async () => {
       const cifrado = await cifrar(padron, PASS);
       await escribirArchivo(ARCH_PADRON, cifrado, `Admin: padrón actualizado (${cuando})`);
       await escribirArchivo(ARCH_PUBLICO, publico, `Admin: asistencia actualizada (${cuando})`);
-      dirtyAsis = false; hecho.push('la asistencia');
+      dirtyAsis = false; hecho.push(dirtyNotas ? 'el padrón' : 'la asistencia');
+    }
+    if(dirtyNotas){
+      const datos = await construirNotas(p => { $('saveState').textContent = `Cifrando notas… ${p}%`; });
+      await escribirArchivo(ARCH_NOTAS, JSON.stringify(datos), `Admin: notas actualizadas (${cuando})`);
+      dirtyNotas = false; hecho.push('las notas');
     }
     if(dirtyCasos){
       const mal = casos.find(c => !String(c.titulo || '').trim() || (!c.archivo && !c.form));
@@ -931,7 +1115,7 @@ $('saveBtn').addEventListener('click', async () => {
     dirty = false; $('saveState').textContent = 'Guardado ' + new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}); $('saveState').classList.remove('dirty');
     aviso(`Guardado: ${hecho.join(', ')}. En el sitio se ve en un minuto o dos.`, 'ok');
   }catch(e){
-    dirty = dirtyAsis || dirtyCrono || dirtyCasos; $('saveBtn').disabled = !dirty; $('saveState').textContent = 'Cambios sin guardar';
+    dirty = dirtyAsis || dirtyCrono || dirtyCasos || dirtyNotas; $('saveBtn').disabled = !dirty; $('saveState').textContent = 'Cambios sin guardar';
     aviso('No se pudo guardar: ' + (e.message || 'error de conexión') + ' Tus cambios siguen en esta pantalla; probá de nuevo.', 'error');
   }
 });
