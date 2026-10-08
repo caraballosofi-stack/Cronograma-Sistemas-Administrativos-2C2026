@@ -107,6 +107,20 @@
   .tabla .barra{display:inline-block;height:8px;border-radius:4px;background:var(--navy);vertical-align:middle;margin-right:8px;}
   details.lista{margin-top:10px;font-size:13.5px;} details.lista summary{cursor:pointer;font-weight:600;color:var(--navy);}
   details.lista ul{margin:8px 0 0;padding-left:18px;columns:2;column-gap:24px;} details.lista li{margin-bottom:3px;break-inside:avoid;}
+  .contacto{border-top:1px solid var(--celeste);padding:12px 0 4px;}
+  .contacto:first-of-type{border-top:none;padding-top:4px;}
+  .contacto .cab{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .contacto .cab b{font-size:14.5px;color:var(--navy);}
+  .contacto .cab .n{font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px;background:var(--celeste);color:var(--navy);}
+  .contacto .cab .por{font-size:12.5px;color:var(--slate-soft);flex:1;min-width:200px;}
+  .contacto ul{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 18px;}
+  .contacto li{font-size:13.5px;line-height:1.35;}
+  .contacto li small{display:block;color:var(--slate-soft);font-size:12px;}
+  .redactor{background:var(--paper);border:1.5px solid var(--celeste-line);border-radius:12px;padding:12px 14px;margin-top:10px;}
+  .redactor label{margin-top:8px;}
+  .redactor textarea{width:100%;min-height:210px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--celeste-line);background:#fff;font-family:inherit;font-size:14px;line-height:1.5;color:var(--ink);resize:vertical;}
+  .redactor .acciones{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center;}
+  .redactor .acciones a.btn{text-decoration:none;display:inline-block;}
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
   .nrow{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--celeste);flex-wrap:wrap;}
   .nrow:last-child{border-bottom:none;}
@@ -200,6 +214,11 @@
 
     <section id="tab-tablero">
       <div class="kpis" id="kpis"></div>
+      <div class="panel">
+        <h3>Para contactar</h3>
+        <p class="nota">Alumnos a los que conviene escribirles, con el motivo. "Dejó de venir" quiere decir que faltó a las últimas 2 clases dictadas. Con "Escribir mail" editás el texto y lo abrís en tu correo con los destinatarios en copia oculta.</p>
+        <div id="contactos"></div>
+      </div>
       <div class="panel">
         <h3>Asistencia por clase</h3>
         <p class="nota">Porcentaje del curso presente en cada clase dictada. Los parciales no se cuentan. Pasá el mouse por una barra para ver el detalle.</p>
@@ -691,12 +710,15 @@ $('listaAlu').addEventListener('click', async e => {
     const nombre = prompt('Nombre y apellido', a.nombre); if(nombre === null) return;
     const reg = prompt('N° de registro (6 dígitos)', a.registro); if(reg === null) return;
     const dni = prompt('DNI', a.dni); if(dni === null) return;
+    const mail = prompt('Correo (para escribirle desde el Tablero)', a.email || ''); if(mail === null) return;
+    const m = mail.trim().toLowerCase();
+    if(m && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){ aviso('No se guardó: el correo no parece válido.', 'error'); return; }
     const r = soloDig(reg), d = soloDig(dni);
     if(nombre.trim().length < 3 || (r && r.length !== 6) || (!r && !d)){ aviso('No se guardó: revisá el nombre, que el registro tenga 6 dígitos y que haya registro o DNI.', 'error'); return; }
     const dup = duplicado(r, d, a.id);
     if(dup){ aviso(`Ya hay otro alumno con ese registro o DNI: ${dup.nombre}.`, 'error'); return; }
     if(nombre.trim() !== a.nombre) delete a.sinNombre;
-    a.nombre = nombre.trim(); a.registro = r; a.dni = d;
+    a.nombre = nombre.trim(); a.registro = r; a.dni = d; a.email = m;
     await absorberLegado(a); ordenar(); marcarIdentidad(); renderAlu(); aviso('');
   }
 });
@@ -885,6 +907,24 @@ const C_OK = '#2E7D6E', C_WARN = '#B7791F', C_BAD = '#C0392B', C_AUS = '#8B97A8'
 const PARCIAL1 = 11;   // n° de sesión del 1er. parcial: la relación usa las clases anteriores
 function pctSobre(a, clases){ return clases.length ? a.clases.filter(c => clases.includes(c)).length / clases.length * 100 : null; }
 function fmt(n, d = 0){ return n === null || isNaN(n) ? '–' : n.toFixed(d).replace('.', ','); }
+const FIRMA = 'Saludos,\nSofía Caraballo\nSistemas Administrativos · Cátedra Saravia';
+const PLANTILLAS = {
+  aprobo: {asunto:'Sistemas Administrativos · ¿Todo bien?', cuerpo:`Hola, ¿cómo estás?\n\nTe escribo porque venías muy bien en Sistemas Administrativos, aprobaste el 1er. parcial, y en las últimas clases no te vimos. Quería saber si está todo bien.\n\nLas clases que vienen son clave para el 2do. parcial y para que puedas promocionar, así que me encantaría que retomes. Si tuviste algún inconveniente, escribime y lo vemos.\n\n${FIRMA}`},
+  desap: {asunto:'Sistemas Administrativos · Todavía estás a tiempo', cuerpo:`Hola, ¿cómo estás?\n\nTe escribo porque te estuvimos extrañando en las últimas clases de Sistemas Administrativos. Sé que el resultado del 1er. parcial no fue el que esperabas, pero quiero que sepas que todavía estás a tiempo: si aprobás el 2do. parcial, podés rendir el recuperatorio del 1ro. y seguir en carrera.\n\nLas clases que vienen son muy importantes para el 2do. parcial, así que te espero. Si te está costando algún tema o tenés alguna dificultad para venir, escribime y lo vemos juntos.\n\nEn la página de la materia podés consultar tu situación y bajar el material de cada clase.\n\n${FIRMA}`},
+  aus: {asunto:'Sistemas Administrativos · ¿Seguís cursando?', cuerpo:`Hola, ¿cómo estás?\n\nTe escribo porque no te vimos en el 1er. parcial ni en las últimas clases de Sistemas Administrativos, y quería saber si seguís cursando la materia.\n\nSi querés continuar, todavía hay camino: si aprobás el 2do. parcial, podés rendir el recuperatorio del 1ro. Para eso es importante que retomes las clases cuanto antes.\n\nSi tuviste algún problema o decidiste no seguir este cuatrimestre, también me sirve saberlo. Cualquier cosa, escribime.\n\n${FIRMA}`},
+  limite: {asunto:'Sistemas Administrativos · Tu asistencia', cuerpo:`Hola, ¿cómo estás?\n\nTe escribo para avisarte que estás cerca del mínimo de asistencia de Sistemas Administrativos (75% de las clases). Con las faltas que tenés, te queda muy poco margen para faltar en lo que resta del cuatrimestre.\n\nPodés ver tu porcentaje y las clases que no tenés registradas en la página de la materia, en "Mi situación académica". Si viniste a alguna clase y no figura, avisame así lo corrijo.\n\n${FIRMA}`},
+  nollega: {asunto:'Sistemas Administrativos · Tu asistencia', cuerpo:`Hola, ¿cómo estás?\n\nTe escribo por tu asistencia en Sistemas Administrativos. Con las faltas que tenés, aunque vengas a todas las clases que quedan no llegarías al 75% de asistencia.\n\nPodés ver tu porcentaje y las clases que no tenés registradas en la página de la materia, en "Mi situación académica". Si viniste a alguna clase y no figura, avisame así lo corrijo. Y si querés, lo charlamos en la próxima clase.\n\n${FIRMA}`}
+};
+function plantilla(k){ return (padron.plantillas || {})[k] || PLANTILLAS[k]; }
+let redactando = null;   // grupo cuyo mail se está escribiendo
+function enlacesMail(bcc, asunto, cuerpo){
+  const e = encodeURIComponent, b = bcc.join(',');
+  return {
+    gmail: `https://mail.google.com/mail/?view=cm&fs=1&bcc=${e(b)}&su=${e(asunto)}&body=${e(cuerpo)}`,
+    outlook: `https://outlook.office.com/mail/deeplink/compose?bcc=${e(b)}&subject=${e(asunto)}&body=${e(cuerpo)}`,
+    mailto: `mailto:?bcc=${e(b)}&subject=${e(asunto)}&body=${e(cuerpo)}`
+  };
+}
 function renderTablero(){
   if(!padron) return;
   const A = padron.alumnos, N = A.length, dict = clasesHastaHoy();
@@ -899,6 +939,63 @@ function renderTablero(){
     kpi('Debajo del 75%', bajo.length, `de ${N} alumnos (${fmt(bajo.length / N * 100)}%)`, bajo.length > 0) +
     kpi('Aprobaron el 1er. parcial', rind.length ? fmt(apr / rind.length * 100) + '%' : '–', rind.length ? `${apr} de ${rind.length} que rindieron` : 'Sin notas cargadas') +
     kpi('Sin venir a las últimas 3 clases', aband.length, ult3.length === 3 ? `clases ${ult3.join(', ')}: posible abandono` : 'Hacen falta 3 clases dictadas', aband.length > 0);
+
+  // Para contactar
+  const total = SESIONES.filter(s => !s[2]).map(s => s[0]), restan = total.filter(c => !dict.includes(c)).length, minimo = Math.ceil(total.length * 0.75);
+  const ult2 = dict.slice(-2), instUlt = A.some(a => ((a.notas || {}).p2 ?? null) !== null) ? 'p2' : 'p1', nomInst = instUlt === 'p2' ? '2do. parcial' : '1er. parcial';
+  const grupos_c = [
+    {k:'aprobo', t:`Aprobó el ${nomInst} y dejó de venir`, por:'Puede ser algo puntual: vale la pena preguntarle.', l:[]},
+    {k:'desap', t:`Desaprobó el ${nomInst} y dejó de venir`, por:'Todavía puede aprobar el otro parcial y recuperar este.', l:[]},
+    {k:'aus', t:`Estuvo ausente en el ${nomInst} y dejó de venir`, por:'Vino a algunas clases y después no volvió.', l:[]},
+    {k:'limite', t:'Al límite de la asistencia', por:`Pueden faltar a 2 clases más como máximo para llegar al 75% (${minimo} de ${total.length} clases).`, l:[]},
+    {k:'nollega', t:'Ya no llegan al 75% aunque vengan a todas', por:`Siguen viniendo, pero con las ${restan} clases que quedan no alcanzan las ${minimo}.`, l:[]}];
+  let nunca = 0;
+  A.forEach(a => {
+    const vino = a.clases.filter(c => dict.includes(c)); if(!vino.length){ nunca++; return; }
+    const nota = (a.notas || {})[instUlt] ?? null, dejo = ult2.length === 2 && !ult2.some(c => vino.includes(c)), margen = vino.length + restan - minimo;
+    const det = `${nota === null ? '' : nota === 'A' ? 'Ausente en el parcial · ' : 'Sacó ' + fmt(nota, Number.isInteger(nota) ? 0 : 1) + ' · '}vino a ${vino.length} de ${dict.length} clases · última: clase ${Math.max(...vino)}`;
+    const g = dejo ? (typeof nota === 'number' ? (apN(nota) ? 'aprobo' : 'desap') : 'aus') : margen < 0 ? 'nollega' : margen <= 2 ? 'limite' : null;
+    if(!g) return;
+    const extra = g === 'limite' ? (margen === 0 ? ' · no puede faltar a ninguna más' : ` · puede faltar a ${margen} más`) : '';
+    grupos_c.find(x => x.k === g).l.push({a, det: det + extra});
+  });
+  const conAlgo = grupos_c.filter(g => g.l.length);
+  $('contactos').innerHTML = (conAlgo.length ? conAlgo.map(g => `<div class="contacto"><div class="cab"><b>${g.t}</b><span class="n">${g.l.length}</span><span class="por">${g.por}</span><button type="button" class="mini" data-escribir="${g.k}">${redactando === g.k ? 'Cerrar mail' : 'Escribir mail'}</button><button type="button" class="mini" data-copiar="${g.k}">Copiar correos</button></div>
+      ${redactando === g.k ? redactor(g) : ''}
+      <ul>${g.l.map(x => `<li>${esc(x.a.nombre)}<small>${x.det}${x.a.email ? '' : ' · sin correo cargado'}</small></li>`).join('')}</ul></div>`).join('') : '<p class="nota">No hay alumnos para contactar por ahora.</p>')
+    + (nunca ? `<p class="nota" style="margin-top:12px">Además, ${nunca} inscriptos no vinieron a ninguna clase; no se listan porque probablemente no están cursando.</p>` : '');
+  function redactor(g){
+    const p = plantilla(g.k), mails = g.l.map(x => x.a.email).filter(Boolean), faltan = g.l.length - mails.length, L = enlacesMail(mails, p.asunto, p.cuerpo);
+    return `<div class="redactor" data-k="${g.k}">
+      <p class="nota" style="margin:0">Va en copia oculta a ${mails.length} alumnos${faltan ? ` (${faltan} sin correo cargado: se lo agregás desde Alumnos → Editar)` : ''}. Lo que cambies en el texto queda guardado para la próxima vez con "Guardar y publicar".</p>
+      <label for="asunto-${g.k}">Asunto</label><input class="field" id="asunto-${g.k}" data-f="asunto" value="${esc(p.asunto)}">
+      <label for="cuerpo-${g.k}">Mensaje</label><textarea id="cuerpo-${g.k}" data-f="cuerpo">${esc(p.cuerpo)}</textarea>
+      <div class="acciones">
+        <a class="btn btn-gold" data-l="gmail" href="${esc(L.gmail)}" target="_blank" rel="noopener">Abrir en Gmail</a>
+        <a class="btn btn-line" data-l="outlook" href="${esc(L.outlook)}" target="_blank" rel="noopener">Abrir en Outlook</a>
+        <a class="btn btn-line" data-l="mailto" href="${esc(L.mailto)}">Abrir en mi programa de correo</a>
+        <button type="button" class="mini" data-restaurar="${g.k}">Volver al texto original</button>
+      </div></div>`;
+  }
+  $('contactos').oninput = e => {
+    const box = e.target.closest('.redactor'); if(!box) return;
+    const k = box.dataset.k, g = grupos_c.find(x => x.k === k);
+    padron.plantillas = padron.plantillas || {};
+    padron.plantillas[k] = {asunto: box.querySelector('[data-f=asunto]').value, cuerpo: box.querySelector('[data-f=cuerpo]').value};
+    const L = enlacesMail(g.l.map(x => x.a.email).filter(Boolean), padron.plantillas[k].asunto, padron.plantillas[k].cuerpo);
+    box.querySelectorAll('[data-l]').forEach(a => a.href = L[a.dataset.l]);
+    marcarCambio();
+  };
+  $('contactos').onclick = async e => {
+    if(e.target.dataset.escribir){ redactando = redactando === e.target.dataset.escribir ? null : e.target.dataset.escribir; renderTablero(); return; }
+    if(e.target.dataset.restaurar){ if(padron.plantillas) delete padron.plantillas[e.target.dataset.restaurar]; marcarCambio(); renderTablero(); return; }
+    const k = e.target.dataset.copiar; if(!k) return;
+    const g = grupos_c.find(x => x.k === k), mails = g.l.map(x => x.a.email).filter(Boolean), faltan = g.l.length - mails.length;
+    if(!mails.length){ aviso('Ninguno de este grupo tiene correo cargado.', 'info'); return; }
+    const txt = mails.join('; ');
+    try{ await navigator.clipboard.writeText(txt); aviso(`Copiados ${mails.length} correos.` + (faltan ? ` ${faltan} no tienen correo cargado.` : '') + ' Pegalos en el campo "Para" o "CCO" del mail.', 'ok'); }
+    catch(_){ aviso('Copiá estos correos: ' + txt, 'info'); }
+  };
 
   // Asistencia por clase
   const pres = dict.map(c => A.filter(a => a.clases.includes(c)).length);
