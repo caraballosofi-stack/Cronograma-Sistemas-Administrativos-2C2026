@@ -294,6 +294,20 @@
     {
      "label": "Apunte · Sistema de Producción",
      "href": "web/viewer.html?file=../apunte_sa_2c26.pdf#page=68"
+    },
+    {
+     "label": "Clase 15",
+     "href": "web/viewer.html?file=../clase_15_sistema_de_produccion.pdf#page=1"
+    },
+    {
+     "label": "Caso Papel Reciclado",
+     "href": "web/viewer.html?file=../caso_7_papel_reciclado.pdf#page=1",
+     "caso": true
+    },
+    {
+     "label": "Caso Nutribaby bis",
+     "href": "web/viewer.html?file=../caso_8_nutribaby_bis.pdf#page=1",
+     "caso": true
     }
    ]
   },
