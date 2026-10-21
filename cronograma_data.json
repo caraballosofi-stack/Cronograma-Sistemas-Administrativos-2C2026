@@ -308,6 +308,10 @@
      "label": "Caso Nutribaby bis",
      "href": "web/viewer.html?file=../caso_8_nutribaby_bis.pdf#page=1",
      "caso": true
+    },
+    {
+     "label": "Nutribaby BMPN",
+     "href": "caso_nutribaby_bpmn.png"
     }
    ]
   },
