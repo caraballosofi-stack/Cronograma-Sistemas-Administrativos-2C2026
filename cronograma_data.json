@@ -354,6 +354,11 @@
     {
      "label": "Clase 17 Sistema de Pagos",
      "href": "web/viewer.html?file=../clase_sistema_de_pagos.pdf#page=1"
+    },
+    {
+     "label": "Caso de Pagos",
+     "href": "web/viewer.html?file=../caso_8b_circuito_de_pagos.pdf#page=1",
+     "caso": true
     }
    ]
   },
