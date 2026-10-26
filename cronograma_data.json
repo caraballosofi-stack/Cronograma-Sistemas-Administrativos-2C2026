@@ -410,24 +410,24 @@
    "resources": []
   },
   {
-   "type": "exam",
+   "type": "practica",
    "num": 24,
    "date": "2026-11-12",
-   "topic": "2do. Parcial",
+   "topic": "Práctica Integradora",
    "resources": []
   },
   {
    "type": "exam",
    "num": 25,
    "date": "2026-11-16",
-   "topic": "Devolución 2do. Parcial – Entrega de notas",
+   "topic": "2do. Parcial",
    "resources": []
   },
   {
-   "type": "practica",
+   "type": "exam",
    "num": 26,
    "date": "2026-11-19",
-   "topic": "Práctica integradora",
+   "topic": "Devolución 2do. Parcial - Entrega de notas",
    "resources": []
   },
   {
@@ -443,9 +443,10 @@
    "resources": []
   },
   {
-   "type": "holiday",
+   "type": "exam",
    "date": "2026-11-30",
-   "label": "Feriado · Día con fines turísticos"
+   "topic": "Devolución de Notas ",
+   "resources": []
   },
   {
    "type": "exam",
