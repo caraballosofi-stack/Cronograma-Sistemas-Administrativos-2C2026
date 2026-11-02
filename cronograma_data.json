@@ -421,11 +421,9 @@
    "resources": []
   },
   {
-   "type": "practica",
-   "num": 23,
+   "type": "holiday",
    "date": "2026-11-09",
-   "topic": "Práctica integradora",
-   "resources": []
+   "label": "Feriado . Visita de Su Santidad el Papa León XIV"
   },
   {
    "type": "practica",
