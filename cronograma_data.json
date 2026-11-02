@@ -399,7 +399,12 @@
    "num": 20,
    "date": "2026-10-29",
    "topic": "Transformación Digital en las organizaciones",
-   "resources": []
+   "resources": [
+    {
+     "label": "Clase Transformación Digital",
+     "href": "web/viewer.html?file=../clase_transformacion_digital.pdf#page=1"
+    }
+   ]
   },
   {
    "type": "practica",
